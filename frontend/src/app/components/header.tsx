@@ -3,7 +3,7 @@
 import React from "react";
 import { Layout, Menu } from "antd";
 import { MenuInfo } from "rc-menu/lib/interface";
-import { useRouter} from "next/navigation";
+import { useRouter, usePathname} from "next/navigation";
 
 const { Header } = Layout;
 const CustomHeader = () => {
