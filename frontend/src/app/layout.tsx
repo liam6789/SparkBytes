@@ -25,7 +25,10 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <CustomHeader />
           {children}
+<<<<<<< HEAD
 >>>>>>> 5581c6f (used app router to link the pages, implemented about page with short explanation and creator blurb)
+=======
+>>>>>>> 002aae7 (used app router to link the pages, implemented about page with short explanation and creator blurb)
       </body>
     </html>
     
