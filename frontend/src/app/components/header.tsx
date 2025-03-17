@@ -3,7 +3,7 @@
 import React from "react";
 import { Layout, Menu } from "antd";
 import { MenuInfo } from "rc-menu/lib/interface";
-import { useRouter} from "next/navigation";
+import { useRouter, usePathname} from "next/navigation";
 
 const { Header } = Layout;
 const CustomHeader = () => {
@@ -15,7 +15,7 @@ const CustomHeader = () => {
     // href: string (route path) (should not have a trailing-slash, like '/news/'; '/news' is correct.)
     { key: '0', label: 'Home', href: '/'},
     { key: '1', label: 'About', href: '/about'},
-    { key: '2', label: 'Events', href: '/events'}
+    { key: '2', label: 'Events', href: '/events'},
     { key: '3', label: 'Login', href: '/login'}
   ];
   // Don't touch this code, use it in your Menu component from Antd
