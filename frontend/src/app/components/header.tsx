@@ -3,23 +3,7 @@
 import React from "react";
 import { Layout, Menu } from "antd";
 import { MenuInfo } from "rc-menu/lib/interface";
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { useRouter, usePathname } from "next/navigation";
-=======
-import { useRouter, usePathname} from "next/navigation";
->>>>>>> cc8a068 (used app router to link the pages, implemented about page with short explanation and creator blurb)
-=======
-import { useRouter, usePathname} from "next/navigation";
->>>>>>> 43fba77 (used app router to link the pages, implemented about page with short explanation and creator blurb)
-=======
-import { useRouter, usePathname} from "next/navigation";
->>>>>>> 485b581 (added missing comma in menu item array)
-=======
-import { useRouter, usePathname } from "next/navigation";
->>>>>>> 002aae7 (used app router to link the pages, implemented about page with short explanation and creator blurb)
+import { useRouter} from "next/navigation";
 
 const { Header } = Layout;
 const CustomHeader = () => {
