@@ -20,11 +20,14 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
           </Content>
           <Footer style={{ textAlign: 'center' }}>Spark! ©2025 Created by Spark!</Footer>
         </Layout>
+<<<<<<< HEAD
 =======
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <CustomHeader />
           {children}
 >>>>>>> 5581c6f (used app router to link the pages, implemented about page with short explanation and creator blurb)
+=======
+>>>>>>> 2bd19b7 (used app router to link the pages, implemented about page with short explanation and creator blurb)
       </body>
     </html>
     
