@@ -7,7 +7,6 @@ const { Content, Footer } = Layout;
 const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-<<<<<<< HEAD
       <body>
         <Layout className="layout" style={{ minHeight: "100vh" }}>
           <CustomHeader />
@@ -21,14 +20,6 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
           </Content>
           <Footer style={{ textAlign: 'center' }}>Spark! ©2025 Created by Spark!</Footer>
         </Layout>
-=======
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <CustomHeader />
-          {children}
-<<<<<<< HEAD
->>>>>>> 5581c6f (used app router to link the pages, implemented about page with short explanation and creator blurb)
-=======
->>>>>>> 002aae7 (used app router to link the pages, implemented about page with short explanation and creator blurb)
       </body>
     </html>
     
