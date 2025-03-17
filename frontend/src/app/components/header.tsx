@@ -6,6 +6,7 @@ import { MenuInfo } from "rc-menu/lib/interface";
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useRouter, usePathname } from "next/navigation";
 =======
 import { useRouter, usePathname} from "next/navigation";
@@ -16,6 +17,9 @@ import { useRouter, usePathname} from "next/navigation";
 =======
 import { useRouter, usePathname} from "next/navigation";
 >>>>>>> 485b581 (added missing comma in menu item array)
+=======
+import { useRouter, usePathname } from "next/navigation";
+>>>>>>> 002aae7 (used app router to link the pages, implemented about page with short explanation and creator blurb)
 
 const { Header } = Layout;
 const CustomHeader = () => {
