@@ -14,8 +14,9 @@ const CustomHeader = () => {
     // label: string
     // href: string (route path) (should not have a trailing-slash, like '/news/'; '/news' is correct.)
     { key: '0', label: 'Home', href: '/'},
-    { key: '1', label: 'About', href: '/news'},
-    { key: '2', label: 'Events', href: '/about'}
+    { key: '1', label: 'About', href: '/about'},
+    { key: '2', label: 'Events', href: '/events'}
+    { key: '3', label: 'Login', href: '/login'}
   ];
   // Don't touch this code, use it in your Menu component from Antd
   const router = useRouter();
