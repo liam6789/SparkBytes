@@ -3,23 +3,7 @@
 import React from "react";
 import { Layout, Menu } from "antd";
 import { MenuInfo } from "rc-menu/lib/interface";
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { useRouter, usePathname } from "next/navigation";
-=======
 import { useRouter, usePathname} from "next/navigation";
->>>>>>> cc8a068 (used app router to link the pages, implemented about page with short explanation and creator blurb)
-=======
-import { useRouter, usePathname} from "next/navigation";
->>>>>>> 43fba77 (used app router to link the pages, implemented about page with short explanation and creator blurb)
-=======
-import { useRouter, usePathname} from "next/navigation";
->>>>>>> 485b581 (added missing comma in menu item array)
-=======
-import { useRouter, usePathname } from "next/navigation";
->>>>>>> 002aae7 (used app router to link the pages, implemented about page with short explanation and creator blurb)
 
 const { Header } = Layout;
 const CustomHeader = () => {
@@ -40,7 +24,7 @@ const CustomHeader = () => {
   };
 
   return <Header style={{ display: "flex", alignItems: "center", backgroundColor: "#F55536"}}>
-    <div style={{color:'white', marginRight: '16px'}}>SparkBytes</div>
+    <div style={{color:'white', marginRight: '16px'}}><strong style={{fontSize:"20px"}}>SparkBytes</strong></div>
     {menuItems.map(item => (
         <div 
           key={item.key} 
