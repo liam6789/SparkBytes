@@ -38,6 +38,8 @@ export default function AboutPage() {
               borderRadius: "8px"
             }}
           />
+          
+          {/* Patty Huang */}
           <div>
             <ul style={{ listStyleType: "none", padding: 0 }}>
               <li style={{ marginBottom: "10px" }}>
@@ -50,9 +52,26 @@ export default function AboutPage() {
                 <strong>Profession:</strong> Student at Boston University
               </li>
             </ul>
-          </div>      
+          </div>
+
+          {/* Louise Lee */}
+          <div>
+            <ul style={{ listStyleType: "none", padding: 0 }}>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Bio:</strong> Louise Lee is a junior studying Computer Science and Psychology 
+                at Boston University. She has a passion for the arts, outdoors, and travel.
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Education:</strong> Boston University, B.A. in Computer Science and Psychology, 
+                estimated to graduate in 2026.
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Profession:</strong> Student at Boston University.
+              </li>
+            </ul>
+          </div>
         </div>
-    </div>
+      </div>
     </>
-    );
+  );
 }
