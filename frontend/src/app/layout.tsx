@@ -7,7 +7,7 @@ const { Content, Footer } = Layout;
 const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <body>
+      <body style={{ margin: 0, padding: 0 }}>
         <Layout className="layout" style={{ minHeight: "100vh" }}>
           <CustomHeader />
           <Content style={{ padding: "0 50px", marginTop: 0 }}>

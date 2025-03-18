@@ -24,7 +24,7 @@ const CustomHeader = () => {
   };
 
   return <Header style={{ display: "flex", alignItems: "center", backgroundColor: "#F55536"}}>
-    <div style={{color:'white', marginRight: '16px'}}>SparkBytes</div>
+    <div style={{color:'white', marginRight: '16px'}}><strong style={{fontSize:"20px"}}>SparkBytes</strong></div>
     {menuItems.map(item => (
         <div 
           key={item.key} 
