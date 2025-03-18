@@ -15,10 +15,10 @@ export default function AboutPage() {
             alignItems: "flex-start",
             justifyContent: "flex-start",
             padding: "20px",
-            backgroundColor: "white", // Add explicit background color
-            color: "black", // Add explicit text color
-            margin: "20px", // Add margin for separation
-            borderRadius: "8px", // Optional: rounded corners
+            backgroundColor: "white",
+            color: "black",
+            margin: "20px",
+            borderRadius: "8px",
           }}
         >
     
@@ -28,10 +28,30 @@ export default function AboutPage() {
     </Typography.Paragraph>
 
     <Typography.Title>About the Creators</Typography.Title>
-    <Typography.Paragraph>
-        So whether you are a space enthusiast or just someone who loves to learn new things,
-        Space! News has something for you. Be sure to check back often for the latest updates and stories!
-    </Typography.Paragraph>
+    <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
+          <img 
+            src="/images/mfa.jpeg" 
+            alt="Patty Huang" 
+            style={{ 
+              width: "250px", 
+              height: "auto", 
+              borderRadius: "8px"
+            }}
+          />
+          <div>
+            <ul style={{ listStyleType: "none", padding: 0 }}>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Bio:</strong> Patty Huang is a current junior at Boston University. She loves to collect Pokemon cards and puzzle!
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Education:</strong> Boston University, B.A. in Computer Science, estimated to graduate in 2026 
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Profession:</strong> Student at Boston University
+              </li>
+            </ul>
+          </div>      
+        </div>
     </div>
     </>
     );
