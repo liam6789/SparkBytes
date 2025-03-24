@@ -5,11 +5,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 import uvicorn
-import asyncpg
+from supabase import create_client, Client
+from dotenv import load_dotenv
+import os
 
 
 # ==================== DATABASE SETUP ==================== #
+load_dotenv(dotenv_path="../.env.local")
 
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ==================== APP SETUP ==================== #
 # FastAPI instance
@@ -25,6 +32,9 @@ app.add_middleware(
 )
 
 # ==================== ROUTES ==================== #
+@app.get("/")
+async def read_root():
+    return {"message": "Hello, World!"}
 
 
 # ==================== MAIN ==================== #
