@@ -1,13 +1,21 @@
 # ==================== IMPORTS ==================== #
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel, EmailStr
 from contextlib import asynccontextmanager
 import uvicorn
-from supabase import create_client, Client
+import asyncpg
+import secrets
+import hashlib
+from typing import Optional, Literal
+from supabase import create_client, Client, datetime, timezone
 from dotenv import load_dotenv
+from datetime import datetime, timezone, timedelta
 import os
+import jwt
+import bcrypt
 
 
 # ==================== DATABASE SETUP ==================== #
@@ -15,6 +23,9 @@ load_dotenv(dotenv_path="../.env.local")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+JWT_SECRET = os.getenv("JWT_SECRET", "YOUR_SECRET_KEY_CHANGE_THIS")
+JWT_ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 1 week
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -31,10 +42,220 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Security scheme
+security = HTTPBearer()
+
+# ==================== MODELS ==================== #
+# Model for user registration, validates input data for user registration
+class UserCreate(BaseModel):
+    email: EmailStr # Uses EmailStr for email validation
+    password: str 
+    role: Literal['regular_user', 'event_creator'] = 'regular_user' # Only want valid roles
+
+# Model for returning user information (excludes password)
+class User(BaseModel):
+    user_id: int 
+    email: EmailStr
+    role: str
+
+# Model for login requests
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+    # Validates login credentials 
+
+# Model for login responses, includes token and user info
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: User
+
+
+# ==================== HELPER FUNCTION ==================== #
+def hash_password(password: str) -> str:
+    """
+    Hashes a password using bcrypt
+    """
+    # Convert password to bytes, generate salt, and hash
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt(rounds=12)  
+    hashed_bytes = bcrypt.hashpw(password_bytes, salt)
+
+    # Return the hash as a string
+    return hashed_bytes.decode('utf-8')
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """
+    Verify a password against a bcrypt hash
+    """
+    password_bytes = plain_password.encode('utf-8')
+    hashed_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    """
+    Create a JWT token with expiration time, takes user data, sets expiration time, encodes using secret key
+    """
+    to_encode = data.copy()
+    
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    return encoded_jwt
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
+    """
+    Validate JWT token and return current user
+    Extracts token from request
+    Decodes JWT to get user_id
+    Fetches user from database
+    """
+    token = credentials.credentials
+    
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get("sub")
+        
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+            
+        # Get user from database
+        response = supabase.table("users").select("*").eq("user_id", user_id).execute()
+        
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+        
+        user_data = response.data[0]
+        
+        return User(
+            user_id=user_data["user_id"],
+            email=user_data["email"],
+            role=user_data["role"]
+        )
+    except jwt.JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token or token expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
 # ==================== ROUTES ==================== #
 @app.get("/")
 async def read_root():
     return {"message": "Hello, World!"}
+
+@app.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
+async def register_user(user_data: UserCreate):
+    """
+    Register a new user
+    Checks if email already exists
+    Hashes password for storage
+    Creates new user in database
+    Returns user data (without password)
+    """
+    # Check if user already exists
+    existing_user = supabase.table("users").select("*").eq("email", user_data.email).execute()
+    
+    if existing_user.data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    
+    # Hash the password
+    hashed_password = hash_password(user_data.password)
+    
+    # Insert the new user
+    try:
+        new_user = {
+            "email": user_data.email,
+            "password": hashed_password,
+            "role": user_data.role
+        }
+        
+        response = supabase.table("users").insert(new_user).execute()
+        
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create user"
+            )
+        
+        created_user = response.data[0]
+        
+        return User(
+            user_id=created_user["user_id"],
+            email=created_user["email"],
+            role=created_user["role"]
+        )
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error creating user: {str(e)}"
+        )
+
+@app.post("/login", response_model=LoginResponse)
+async def login_user(login_data: LoginRequest):
+    """
+    Login a user and return a JWT token
+    Verifies email exists
+    Checks password against stored hash
+    Generates JWT token with user_id
+    Returns token and user data 
+    """
+    # Get user from database
+    response = supabase.table("users").select("*").eq("email", login_data.email).execute()
+    
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
+    
+    user_data = response.data[0]
+    
+    # Verify password
+    if not verify_password(login_data.password, user_data["password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
+    
+    # Generate JWT token
+    access_token = create_access_token(
+        data={"sub": str(user_data["user_id"])}
+    )
+    
+    # Return token and user info
+    return LoginResponse(
+        access_token=access_token,
+        user=User(
+            user_id=user_data["user_id"],
+            email=user_data["email"],
+            role=user_data["role"]
+        )
+    )
+
+@app.get("/me", response_model=User)
+async def get_user_profile(current_user: User = Depends(get_current_user)):
+    """
+    Get the current user's profile using JWT token 
+    Returns user data for authenticated user 
+    """
+    return current_user
+
 
 
 # ==================== MAIN ==================== #
