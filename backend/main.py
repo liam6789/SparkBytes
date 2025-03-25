@@ -10,7 +10,7 @@ import asyncpg
 import secrets
 import hashlib
 from typing import Optional, Literal
-from supabase import create_client, Client, datetime, timezone
+from supabase import create_client, Client
 from dotenv import load_dotenv
 from datetime import datetime, timezone, timedelta
 import os
@@ -38,7 +38,7 @@ app = FastAPI()
 # CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
