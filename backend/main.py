@@ -16,6 +16,8 @@ from datetime import datetime, timezone, timedelta
 import os
 import jwt
 import bcrypt
+import smtplib # Sennd emails
+from email.mime.text import MIMEText  # Format "forget" email
 
 
 # ==================== DATABASE SETUP ==================== #
@@ -70,6 +72,9 @@ class LoginResponse(BaseModel):
     token_type: str = "bearer"
     user: User
 
+# Validate forgotten password req, email format
+class ForgotRequest(BaseModel):
+    email: EmailStr
 
 # ==================== HELPER FUNCTION ==================== #
 def hash_password(password: str) -> str:
@@ -256,6 +261,73 @@ async def get_user_profile(current_user: User = Depends(get_current_user)):
     """
     return current_user
 
+# ===== Password: Forgotten and Recovery ===== #
+
+# Extract email to send to
+@app.post("/forgot-password")
+async def forgot_password(request: ForgotRequest):
+    email = request.email
+
+    # Check if the email exists in the users table
+    response = supabase.table("users").select("*").eq("email", email).execute()
+
+    # User not in db, generic msg
+    if not response.data:
+        return {"message": "If an account with that email exists, a recovery email has been sent."}
+    
+    # Extract user from resp
+    user_data = response.data[0]
+
+    # Generate a temporary assword reset 30min
+    reset_token = create_access_token(
+        data={"sub": str(user_data["user_id"])},
+        expires_delta=timedelta(minutes=30)
+    )
+    
+    # Send password recovery email
+    try:
+        sender_email = os.getenv("SENDER_EMAIL")  # Sender email addr
+        sender_password = os.getenv("SENDER_PASSWORD")  # Account password
+        smtp_server = "smtp.gmail.com" # Sever for gmail
+        smtp_port = 587
+
+        # Email content
+        subject = "Password Reset Request - Spark! Bytes"
+        content = f"""
+        Hello {email},
+
+        We received a request to reset your password for your SparkBytes account. 
+        Click the link below to reset your password (Valid for 30 minutes):
+
+        http://localhost:3000/reset-password?token={reset_token}
+
+        If you did not request this, please ignore this email.
+
+        Best,
+        Spark! Bytes Team
+        """
+
+        # Email object
+        msg = MIMEText(content)
+        msg["Subject"] = subject
+        msg["From"] = sender_email
+        msg["To"] = email
+
+        # Send email
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, email, msg.as_string())
+    
+    # Exception if fail
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to send recovery email: {str(e)}"
+        )
+
+    # Generic success msg
+    return {"message": "If an account with that email exists, a recovery email has been sent."}
 
 
 # ==================== MAIN ==================== #
