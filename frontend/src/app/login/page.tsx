@@ -104,6 +104,7 @@ export default function LoginPage() {
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* Forgot Password Link */}
           <div className="flex items-center justify-between mt-2">
             <div className="text-sm">
@@ -113,6 +114,8 @@ export default function LoginPage() {
             </div>
           </div>
           
+=======
+>>>>>>> e49f986 (added login and registration page)
           <div>
             <button
               type="submit"
