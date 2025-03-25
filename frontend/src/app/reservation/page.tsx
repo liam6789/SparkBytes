@@ -4,17 +4,16 @@ import { Typography, Button, Input, Dropdown, Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import { ReservationCreate, ReservationData, FoodData, EventData } from "@/types/types";
 
 export default function ReservationPage() {
-    const [eventOpts, setEventOpts] = useState([]);
-    const [foodOpts, setFoodOpts] = useState([]);
-    const [quantityMax, setQuantity] = useState(0);
-    const [latestTime, setLatestTime] = useState(dayjs().hour(23).minute(59));
+    const [eventOpts, setEventOpts] = useState<EventData[]>([]);
+    const [foodOpts, setFoodOpts] = useState<FoodData[]>([]);
     const [timeOpts, setTimeOpts] = useState<dayjs.Dayjs[]>([]);
 
-    const [event, setEvent] = useState(-1);
-    const [foodID, setFoodID] = useState(-1);
-    const [quantity, setQuanity] = useState(0);
+    const [event, setEvent] = useState<EventData | null>(null);
+    const [food, setFood] = useState<FoodData | null>(null);
+    const [quantity, setQuantity] = useState(0);
     const [quantityStr, setQuantityStr] = useState("");
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [note, setNote] = useState("");
@@ -33,16 +32,13 @@ export default function ReservationPage() {
 
     useEffect(() => {
         // TODO: Implement backend functionality that will load the food options for the selected event. Updated whenever the selected event changes
+        generateTimeSlots();
     }, [event])
 
     useEffect(() => {
         // TODO: Implement backend functionality that will load the max quantity of the selected food option that is available for the 
         // selected event so that they don't enter a value greater than the max.
-    }, [foodID])
-
-    useEffect(() => {
-        generateTimeSlots()
-    }, [latestTime])
+    }, [food])
 
 
     const generateTimeSlots = () => {
@@ -50,7 +46,7 @@ export default function ReservationPage() {
         let roundedNow = now.subtract(now.minute() % 5, "minute");
         let times = [];
 
-        while (roundedNow.isBefore(latestTime)) {
+        while (roundedNow.isBefore(event?.last_res_time)) {
             times.push(roundedNow);
             roundedNow = roundedNow.add(5, "minute");
         }
@@ -70,35 +66,38 @@ export default function ReservationPage() {
             <Dropdown 
                 menu={{
                     items: eventOpts.map((events) => ({
-                        key: events,
-                        label: events,
+                        key: events.event_name,
+                        label: events.event_name,
                         onClick: () => setEvent(events),
                     })),
                 }}
             >
                 <Button>
-                    {event ? event : "Choose an event"} <DownOutlined />
+                    {event?.event_name ? event.event_name : "Choose an event"} <DownOutlined />
                 </Button>
             </Dropdown>
-
-            <Typography.Title level={3}>
+            
+            {event != null ?
+            <><Typography.Title level={3}>
                 Select Food Item
             </Typography.Title>
             <Dropdown 
                 menu={{
                     items: foodOpts.map((foods) => ({
-                        key: foods,
-                        label: foods,
-                        onClick: () => setEvent(foods),
+                        key: foods.food_name,
+                        label: foods.food_name,
+                        onClick: () => setFood(foods),
                     })),
                 }}
             >
                 <Button>
-                    {foodID ? foodID : "Choose a food item"} <DownOutlined />
+                    {food?.food_name ? food.food_name : "Choose a food item"} <DownOutlined />
                 </Button>
-            </Dropdown>
+            </Dropdown> </>: null
+            }
 
-            <Typography.Title level={3}>
+            {food != null ?
+            <><Typography.Title level={3}>
                 Input Quantity
             </Typography.Title>
             <Input
@@ -108,9 +107,11 @@ export default function ReservationPage() {
                     setQuantityStr(e.target.value)
                 }}
             >
-            </Input>
+            </Input> </>: null   
+            }
 
-            <Typography.Title level={3}>
+            {event != null && food != null ? 
+            <><Typography.Title level={3}>
                 Pickup Time
             </Typography.Title>
             <Dropdown
@@ -125,9 +126,11 @@ export default function ReservationPage() {
                 <Button>
                     {selectedTime || "Choose a time"} <DownOutlined />
                 </Button>
-            </Dropdown>
+            </Dropdown></> : null
+            }
 
-            <Typography.Title level={3}>
+            {selectedTime != null ? 
+            <><Typography.Title level={3}>
                 Notes
             </Typography.Title>
             <Input
@@ -143,7 +146,8 @@ export default function ReservationPage() {
                 onClick={(e) => {
                     setSubmit(true)
                 }}
-            >Submit</Button>
+            >Submit</Button></> : null
+            }
         </>
     );
 }
