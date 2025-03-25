@@ -11,7 +11,8 @@ const CustomHeader = () => {
     { key: '0', label: 'Home', href: '/'},
     { key: '1', label: 'About', href: '/about'},
     { key: '2', label: 'Events', href: '/events'},
-    { key: '3', label: 'Login', href: '/login'}
+    { key: '3', label: 'Login', href: '/login'},
+    { key: '4', label: 'Reservations', href: '/reservation'}
   ];
   
   const router = useRouter();
