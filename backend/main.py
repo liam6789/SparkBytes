@@ -16,7 +16,7 @@ from datetime import datetime, timezone, timedelta
 import os
 import jwt
 import bcrypt
-import smtplib # Sennd emails
+import smtplib # Send emails
 from email.mime.text import MIMEText  # Format "forget" email
 
 
@@ -75,6 +75,11 @@ class LoginResponse(BaseModel):
 # Validate forgotten password req, email format
 class ForgotRequest(BaseModel):
     email: EmailStr
+
+# Model to reset password
+class ResetPasswordRequest(BaseModel):  #
+    token: str
+    new_password: str
 
 # ==================== HELPER FUNCTION ==================== #
 def hash_password(password: str) -> str:
@@ -329,6 +334,36 @@ async def forgot_password(request: ForgotRequest):
     # Generic success msg
     return {"message": "If an account with that email exists, a recovery email has been sent."}
 
+@app.post("/reset-password")
+async def reset_password(request: ResetPasswordRequest):  # ✅ New route for resetting password
+    try:
+        # Decode the JWT token to get user_id
+        payload = jwt.decode(request.token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get("sub")
+        
+        if not user_id:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token.")
+        
+        # Check if the token is expired
+        if datetime.now(timezone.utc) > datetime.fromtimestamp(payload["exp"]):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Token has expired.")
+        
+        # Hash the new password
+        new_hashed_password = hash_password(request.new_password)
+        
+        # Update the user's password in the database
+        response = supabase.table("users").update({"password": new_hashed_password}).eq("user_id", user_id).execute()
+        
+        if response.status_code != 200:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update password.")
+        
+        return {"message": "Password has been successfully reset. You can now log in with your new password."}
+    
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The reset link has expired. Please request a new one.")
+    
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token.")
 
 # ==================== MAIN ==================== #
 if __name__ == "__main__":
