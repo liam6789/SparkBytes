@@ -6,6 +6,19 @@ export interface ReservationCreate {
     notes: Text
 }
 
+export interface EventCreate {
+    name: string,
+    description: string,
+    start: Date | null | undefined,
+    end: Date | null | undefined, 
+    food: CreateFoodItem[]
+}
+
+export interface CreateFoodItem {
+    name: string,
+    quantity: number
+}
+
 export interface ReservationData {
     res_id: number,
     food_id: number,
