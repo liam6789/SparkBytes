@@ -320,6 +320,47 @@ async def get_user_profile(current_user: User = Depends(get_current_user)):
     """
     return current_user
 
+
+@app.get("/events")
+async def get_events(current_user: User = Depends(get_current_user)):
+    """
+    Fetch all events for the current user
+    """
+    # fetch events created by the current user
+    response = (
+        supabase.table("events")
+        .select("*, foods(*)")  # select events and their associated foods
+        .eq("creator_id", current_user.user_id)
+        .execute()
+    )
+
+    # if no events found, return an empty list
+    if not response.data:
+        return []
+
+    # transform the events to match your frontend's expected structure
+    events = []
+    for event in response.data:
+        events.append({
+            "event_id": event["event_id"],
+            "event_name": event["event_name"],
+            "description": event.get("description"),
+            "date": event["start_time"],
+            "creator_id": event["creator_id"],
+            "created_at": event["created_at"],
+            "last_res_time": event["last_res_time"],
+            "foods": [
+                {
+                    "food_id": food["food_id"],
+                    "food_name": food["food_name"],
+                    "quantity": food["quantity"],
+                    "event_id": food["event_id"]
+                } for food in event.get("foods", [])
+            ]
+        })
+
+    return events
+
 # ===== Password: Forgotten and Recovery ===== #
 
 # Extract email to send to
