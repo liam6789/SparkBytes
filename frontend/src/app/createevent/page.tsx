@@ -24,16 +24,31 @@ export default function EventCreationPage() {
     const [quantStr, setQuantStr] = useState("");
     const [validQuant, setValidQuant] = useState(true);
 
-    const [createEvent, setCreateEvent] = useState(false);
+    const [isError, setIsError] = useState(false);
 
-    useEffect(() => {
-        // Need to implement API route that actually adds the event to the database
-        const event: EventCreate = {
-            name: name,
-            description: description,
-            start: startTime?.toDate(),
-            end: endTime?.toDate(),
-            food: foods,
+    const createevent = async () => {
+        const token = localStorage.getItem("accessToken");
+        console.log(token)
+        const body = JSON.stringify({
+            "name": name,
+            "description": description,
+            "start": startTime?.format(),
+            "end": endTime?.format(),
+            "food": foods
+        })
+
+        const res = await fetch(`http://localhost:5001/createevent`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body,
+        });
+        if (res.ok) {
+            setIsError(false)
+        } else {
+            setIsError(true)
         }
 
         setName("")
@@ -45,8 +60,9 @@ export default function EventCreationPage() {
         setQuantity(0)
         setQuantStr("")
         setValidQuant(true)
-        setCreateEvent(false);
-    },[createEvent])
+    }
+        
+
 
     return (
         <>
@@ -139,10 +155,11 @@ export default function EventCreationPage() {
                     Add Item
                 </Button>
             </div>
+            {isError ? <Typography.Paragraph style={{color:"red"}}>Failed to Create Event. Try again!</Typography.Paragraph> : null}
             <div>   
                 <Button
                     onClick={(e) => {
-                        setCreateEvent(true)
+                        createevent()
                     }}
                     style={{marginTop:"12px"}}
                 >
