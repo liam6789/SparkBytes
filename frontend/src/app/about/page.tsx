@@ -55,6 +55,16 @@ export default function AboutPage() {
           </div>
 
           {/* Louise Lee */}
+          <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
+          <img 
+            src="/images/" // Add image
+            alt="Louise Lee" 
+            style={{ 
+              width: "250px", 
+              height: "auto", 
+              borderRadius: "8px"
+            }}
+          />
           <div>
             <ul style={{ listStyleType: "none", padding: 0 }}>
               <li style={{ marginBottom: "10px" }}>
@@ -69,6 +79,7 @@ export default function AboutPage() {
                 <strong>Profession:</strong> Student at Boston University.
               </li>
             </ul>
+          </div>
           </div>
         </div>
       </div>
