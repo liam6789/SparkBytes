@@ -81,6 +81,18 @@ class ResetPasswordRequest(BaseModel):  #
     token: str
     new_password: str
 
+class FoodItem(BaseModel):
+    name: str
+    quantity: int
+
+class CreateEvent(BaseModel):
+    name: str
+    description: str
+    start: datetime
+    end: datetime 
+    food: list[FoodItem]
+
+
 # ==================== HELPER FUNCTION ==================== #
 def hash_password(password: str) -> str:
     """
@@ -153,7 +165,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             email=user_data["email"],
             role=user_data["role"]
         )
-    except jwt.JWTError:
+    except jwt.PyJWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token or token expired",
@@ -164,6 +176,48 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 @app.get("/")
 async def read_root():
     return {"message": "Hello, World!"}
+
+@app.post("/createevent")
+async def create_event(data: CreateEvent, current_user: User = Depends(get_current_user)):
+    #print(current_user.user_id)
+    #print(data)
+    creator_id = current_user.user_id
+    name = data.name
+    description = data.description
+    start_time = data.start.isoformat()
+    last_res_time = data.end.isoformat()
+
+    response = (
+        supabase.table("events")
+        .insert({"creator_id": creator_id, "event_name": name, "description": description, "start_time": start_time, "last_res_time":last_res_time})
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to insert event"
+        )
+
+
+    # print(response.data[0]['event_id'])
+    event_id = response.data[0]['event_id']
+
+    for food in data.food:
+        response = (
+            supabase.table("foods")
+            .insert({"food_name": food.name, "quantity": food.quantity, "event_id": event_id})
+            .execute()
+        )
+        # print (response)
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to insert food item"
+            )
+
+    return {"message": "Success"}
+
 
 @app.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
 async def register_user(user_data: UserCreate):
