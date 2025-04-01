@@ -35,48 +35,84 @@ export default function ForgotPasswordPage() {
 
   //  Forgot password form
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Forgot Your Password?
+    <div style={{
+      minHeight: '600px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#f5f7fa',
+      padding: '1'
+    }}>
+      <div style={{
+        maxWidth: '500px',
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        padding: '2'
+      }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '2' }}>
+          <h2>
+            Forgot your password?
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your email below and we’ll send you a link to reset your password.
+          <p>
+            Enter your email and we’ll send you a link to reset your password.
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {/* Display error message */}
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <span className="block sm:inline">{error}</span>
-            </div>
-          )}
+        {/* Success and error messages */}
+        {error && (
+          <div style={{
+            color: 'red',
+            padding: '10px',
+            borderRadius: '4px',
+            marginBottom: '10px',
+            backgroundColor: '#ffe6e6'
+          }}>
+          <p>
+            Something went wrong. Please try again.
+          </p>
+          </div>
+        )}
+        {success && (
+          <div style={{
+            color: 'green',
+            padding: '10px',
+            borderRadius: '4px',
+            marginBottom: '10px',
+            backgroundColor: '#e6ffea'
+          }}>
+          <p>
+            If user exists, verification email has been sent. Follow the instructions to reset your password.
+          </p>
+          </div>
+        )}
 
-          {/* Display success message */}
-          {success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-              <span className="block sm:inline">{success}</span>
-            </div>
-          )}
-
+        {/* Form starts */}
+        <form onSubmit={handleSubmit}>
           {/* Email input field */}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}                              // ✅ Using the `email` state
-                onChange={(e) => setEmail(e.target.value)}  // ✅ Updating state using `setEmail`
-              />
-            </div>
+          <div style={{ marginBottom: '10px' }}>
+            <label htmlFor="email" style={{
+              display: 'block',
+              marginBottom: '10px',
+            }}>
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px'
+              }}
+            />
           </div>
 
           {/* Submit button */}
@@ -84,16 +120,22 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              style={{
+                width: '100%',
+                padding: '0.6rem',
+                backgroundColor: '#f55536',
+                color: 'white',
+                border: 'none'
+              }}
             >
               {loading ? 'Sending...' : 'Send Recovery Email'}
             </button>
           </div>
 
-          {/* Link to go back to login page */}
-          <div className="text-sm text-center mt-4">
-            <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Remembered your password? Sign in
+          {/* Link to login page */}
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <Link href="/login">
+              Login instead
             </Link>
           </div>
         </form>
