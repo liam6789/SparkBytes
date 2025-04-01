@@ -460,6 +460,36 @@ async def reset_password(request: ResetPasswordRequest):  # ✅ New route for re
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token.")
 
+# ======================== Host POV: Latest event ======================= #
+# Define GET endpoint to fetch latest host event
+@app.get("/host-latest-event")
+async def get_host_latest_event(current_user: User = Depends(get_current_user)):
+
+    # Query for most recent event created by host
+    event_resp = (
+        # Using the events table
+        supabase.table("events")
+        # Select all fields from events table
+        .select("*")
+        # Filter to only get events created by the host
+        .eq("creator_id", current_user.user_id)
+        # Order events by the creation time
+        .order("created_at", desc=True)
+        # Extract most recent event - assumption host only hosts 1 event at a time
+        .limit(1)
+        .execute()
+    )
+
+    # If no events found, return a message
+    if not event_resp.data:
+        return {"message": "No events found for this host."}
+
+    # Return just the event info (no joins, no extras)
+    return {
+        "event": event_resp.data[0]
+    }
+
+
 # ==================== MAIN ==================== #
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=5001, reload=True)
