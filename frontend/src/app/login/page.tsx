@@ -101,84 +101,48 @@ export default function LoginPage() {
               <span>{error}</span>
             </div>
           )}
-
-          <div style={{
-            marginBottom: '1rem'
-          }}>
-            <label 
-              htmlFor="email-address" 
-              style={{
-                display: 'block',
-                marginBottom: '0.5rem',
-                fontSize: '0.9rem'
-              }}
-            >
-              Email
-            </label>
-            <input
-              id="email-address"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                marginBottom: '1rem'
-              }}
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div style={{
-            marginBottom: '1rem'
-          }}>
-            <label 
-              htmlFor="password"
-              style={{
-                display: 'block',
-                marginBottom: '0.5rem',
-                fontSize: '0.9rem'
-              }}
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                marginBottom: '0.5rem'
-              }}
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <div style={{
-            textAlign: 'right',
-            marginBottom: '1.5rem',
-          }}>
-            <Link 
-              href="/forgot-password" 
-              style={{
-                fontSize: '0.8rem',
-                color: '#f55536'
-              }}
-            >
-              Forgot your password?
-            </Link>
+          {/* Forgot Password Link */}
+          <div className="flex items-center justify-between mt-2">
+            <div className="text-sm">
+              <Link href="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
+                Forgot your password?
+              </Link>
+            </div>
           </div>
           
           <div>
