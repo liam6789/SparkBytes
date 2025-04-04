@@ -361,6 +361,47 @@ async def get_events(current_user: User = Depends(get_current_user)):
 
     return events
 
+@app.get("/active-events")
+async def get_active_events():
+    now = datetime.now(timezone.utc).isoformat()
+
+    response = supabase.table("events").select("*").lte("start_time", now).gte("last_res_time",now).execute()
+    if not response.data:
+        return {"events": []}
+    
+    # Translate the supabase response to a format that frontend can use
+    events = []
+    for event in response.data:
+        events.append({
+            "event_id": event["event_id"],
+            "event_name": event["event_name"],
+            "description": event.get("description"),
+            "date": event["start_time"],
+            "creator_id": event["creator_id"],
+            "created_at": event["created_at"],
+            "last_res_time": event["last_res_time"]
+        })
+    return {"events": events}
+
+@app.get("/get-food/{event_id}")
+async def get_food(event_id: int):
+    response = supabase.table("foods").select("*").eq("event_id", event_id).execute()
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No food items found for this event")
+    
+    # Translate the supabase response to a format that frontend can use
+    foods = []
+    for food in response.data:
+        foods.append({
+            "food_id": food["food_id"],
+            "food_name": food["food_name"],
+            "quantity": food["quantity"],
+            "event_id": food["event_id"]
+        })
+    return {"foods": foods}
+
 # ===== Password: Forgotten and Recovery ===== #
 
 # Extract email to send to
