@@ -3,6 +3,7 @@
 import { Typography, Button, Input, Dropdown, Menu, DatePicker } from "antd";
 import React, { useEffect, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
+import { useRouter } from 'next/navigation';
 import dayjs, { Dayjs } from "dayjs";
 import { CreateFoodItem } from "@/types/types";
 import type { DatePickerProps, GetProps } from "antd";
@@ -12,6 +13,7 @@ type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
 
 export default function EventCreationPage() {
+    const router = useRouter()
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [foods, setFoods] = useState<CreateFoodItem[]>([]);
@@ -44,6 +46,7 @@ export default function EventCreationPage() {
         });
         if (res.ok) {
             alert("Event created successfully!");
+            router.push('/events')
             setName("")
             setDescription("")
             setFoods([])

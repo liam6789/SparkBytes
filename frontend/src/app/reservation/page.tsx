@@ -2,12 +2,14 @@
 
 import { Typography, Button, Input, Dropdown, Menu, TimePicker } from "antd";
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import { DownOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import ReservationTimePicker from "../components/picktime";
 import { FoodData, EventData } from "@/types/types";
 
 export default function ReservationPage() {
+    const router = useRouter()
     const [eventOpts, setEventOpts] = useState<EventData[]>([]);
     const [foodOpts, setFoodOpts] = useState<FoodData[]>([]);
     const [quantityOpts, setQuantityOpts] = useState<number[]>([]);
@@ -26,6 +28,7 @@ export default function ReservationPage() {
         const token = localStorage.getItem("accessToken");
         const body = JSON.stringify({
             "food_id": food?.food_id,
+            "food_name":food?.food_name,
             "event_id": event?.event_id,
             "quantity": quantity,
             "pickup_time": selectedTime,
@@ -43,6 +46,7 @@ export default function ReservationPage() {
 
         if (res.ok) {
             alert("Reservation created successfully!");
+            router.push('/');
             setEvent(null);
             setFood(null);
             setQuantity(0);
