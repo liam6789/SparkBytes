@@ -94,6 +94,7 @@ class CreateEvent(BaseModel):
 
 class CreateRes(BaseModel):
     food_id: int
+    food_name: str
     event_id: int
     quantity: int
     pickup_time: datetime
@@ -230,7 +231,7 @@ async def create_reservation(data: CreateRes, current_user: User = Depends(get_c
     user_id = current_user.user_id
     response = (
         supabase.table("reservations")
-        .insert({"user_id": user_id, "food_id": data.food_id, "event_id": data.event_id, "quantity": data.quantity, "res_time": data.pickup_time.isoformat(), "notes": data.note})
+        .insert({"user_id": user_id, "food_id": data.food_id, "food_name": data.food_name, "event_id": data.event_id, "quantity": data.quantity, "res_time": data.pickup_time.isoformat(), "notes": data.note})
         .execute()
     )
     print(response)
@@ -424,6 +425,97 @@ async def get_events(current_user: User = Depends(get_current_user)):
         })
 
     return events
+
+@app.get("/events/{event_id}")
+async def get_event(event_id: int, current_user: User = Depends(get_current_user)):
+    response = (
+        supabase.table("events")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not found"
+        )
+    
+    if response.data[0]["creator_id"] != current_user.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this event"
+        )
+    
+    event = response.data[0]
+    event_data = {
+        "event_id": event["event_id"],
+        "event_name": event["event_name"],
+        "description": event.get("description"),
+        "date": event["start_time"],
+        "creator_id": event["creator_id"],
+        "start_time": event["start_time"],
+        "last_res_time": event["last_res_time"],
+    }
+    
+    response = (
+        supabase.table("foods")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    food = response.data 
+    if not response.data:
+        food = []
+
+
+    response = (
+        supabase.table("reservations")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    reservations = response.data
+    if not response.data:
+        reservations = []
+
+    return {"event": event_data, "food": food, "reservations": reservations}
+
+@app.post("/events/delete/{event_id}")
+async def delete_event(event_id: int, current_user: User = Depends(get_current_user)):
+    response = (
+        supabase.table("events")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not found"
+        )
+    if response.data[0]["creator_id"] != current_user.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to delete this event"
+        )
+    
+    response = (
+        supabase.table("events")
+        .delete()
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete event"
+        )
+    return {"message": "Event deleted successfully"}
 
 @app.get("/active-events")
 async def get_active_events():

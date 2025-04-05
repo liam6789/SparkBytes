@@ -22,6 +22,7 @@ export interface CreateFoodItem {
 export interface ReservationData {
     res_id: number,
     food_id: number,
+    food_name: string,
     user_id: number,
     event_id: number,
     quantity: number,
@@ -42,6 +43,6 @@ export interface EventData {
     description: string,
     date: Date,
     creator_id: number,
-    created_at: Date,
+    start_time: Date,
     last_res_time: Date
 }
