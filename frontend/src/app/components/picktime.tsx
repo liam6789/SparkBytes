@@ -24,10 +24,15 @@ const ReservationTimePicker : React.FC<Props> = ({ lastRes, onChange }) => {
                 }
                 return hours;
             },
-            disabledMinutes: () => {
+            disabledMinutes: (hour : number) => {
                 const minutes = [];
-                if (currentHour === lastRes.hour()) {
+                if (hour === currentHour) {
                     for (let i = 0; i < currentMinute; i++) {
+                        minutes.push(i);
+                    }
+                }
+                if (hour === lastRes.hour()) {
+                    for (let i = 60; i > lastRes.minute(); i--) {
                         minutes.push(i);
                     }
                 }
