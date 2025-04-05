@@ -92,6 +92,13 @@ class CreateEvent(BaseModel):
     end: datetime 
     food: list[FoodItem]
 
+class CreateRes(BaseModel):
+    food_id: int
+    event_id: int
+    quantity: int
+    pickup_time: datetime
+    note: str
+
 
 # ==================== HELPER FUNCTION ==================== #
 def hash_password(password: str) -> str:
@@ -218,6 +225,63 @@ async def create_event(data: CreateEvent, current_user: User = Depends(get_curre
 
     return {"message": "Success"}
 
+@app.post("/createreservation")
+async def create_reservation(data: CreateRes, current_user: User = Depends(get_current_user)):
+    user_id = current_user.user_id
+    response = (
+        supabase.table("reservations")
+        .insert({"user_id": user_id, "food_id": data.food_id, "event_id": data.event_id, "quantity": data.quantity, "res_time": data.pickup_time.isoformat(), "notes": data.note})
+        .execute()
+    )
+    print(response)
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to insert event"
+        )
+    
+    response = (
+        supabase.table("foods")
+        .select("quantity")
+        .eq("food_id", data.food_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch food item"
+        )
+
+    food_quantity = response.data[0]['quantity']
+    new_quantity = food_quantity - data.quantity
+    if new_quantity < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Not enough food available"
+        )
+    elif new_quantity == 0:
+        response = (
+            supabase.table("foods")
+            .delete()
+            .eq("food_id", data.food_id)
+            .execute()
+        )
+    else: 
+        response = (
+            supabase.table("foods")
+            .update({"quantity": new_quantity})
+            .eq("food_id", data.food_id)
+            .execute()
+        )
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update food item"
+        )
+    
+    return {"message": "Success"}
 
 @app.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
 async def register_user(user_data: UserCreate):

@@ -3,15 +3,14 @@
 import { Typography, Button, Input, Dropdown, Menu, TimePicker } from "antd";
 import React, { useEffect, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import ReservationTimePicker from "../components/picktime";
-import { ReservationCreate, ReservationData, FoodData, EventData } from "@/types/types";
+import { FoodData, EventData } from "@/types/types";
 
 export default function ReservationPage() {
     const [eventOpts, setEventOpts] = useState<EventData[]>([]);
     const [foodOpts, setFoodOpts] = useState<FoodData[]>([]);
     const [quantityOpts, setQuantityOpts] = useState<number[]>([]);
-    const [lastTime, setLastTime] = useState<dayjs.Dayjs>(dayjs());
     
     const [noEvents, setNoEvents] = useState("");
     const [noFood, setNoFood] = useState("");
@@ -19,16 +18,44 @@ export default function ReservationPage() {
     const [event, setEvent] = useState<EventData | null>(null);
     const [food, setFood] = useState<FoodData | null>(null);
     const [quantity, setQuantity] = useState(0);
-    const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [selectedTime, setSelectedTime] = useState<Dayjs | null | undefined>(null);
     const [note, setNote] = useState("");
     const [onStart, setOnStart] = useState(true);
 
-    const [submit, setSubmit] = useState(false)
+    const createReservation = async () => {
+        const token = localStorage.getItem("accessToken");
+        const body = JSON.stringify({
+            "food_id": food?.food_id,
+            "event_id": event?.event_id,
+            "quantity": quantity,
+            "pickup_time": selectedTime,
+            "note": note,
+        })
 
-    useEffect(() => {
-        // TODO: Implement backend functionality to insert data into the reservations table in the database
-        setSubmit(false)
-    }, [submit])
+        const res = await fetch(`http://localhost:5001/createreservation`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body,
+        });
+
+        if (res.ok) {
+            alert("Reservation created successfully!");
+            setEvent(null);
+            setFood(null);
+            setQuantity(0);
+            setSelectedTime(null);
+            setNote("");
+            setFoodOpts([]);
+            setQuantityOpts([]);
+            setNoEvents("");
+            setNoFood("");
+        } else {
+            alert("Failed to create reservation. Please try again.");
+        }
+    }
 
     useEffect(() => {
         // TODO: Implement backend functionality that will load the current events into the eventOpts state so that users can select
@@ -81,7 +108,6 @@ export default function ReservationPage() {
             setOnStart(false);
         } else if (event != null) {
             fetchFood();
-            setLastTime(dayjs(event.last_res_time));
             setFood(null);
             setQuantity(0);
             setQuantityOpts([]);
@@ -177,7 +203,12 @@ export default function ReservationPage() {
                 lastRes={dayjs(event.last_res_time)}
                 onChange={(time) => {
                     if (time != null) {
-                        setSelectedTime(time.format("HH:mm"));
+                        const fullDateTime = dayjs()
+                            .hour(time.hour())
+                            .minute(time.minute())
+                            .second(0)
+                            .millisecond(0)
+                        setSelectedTime(fullDateTime);
                     } else {
                         setSelectedTime(null);
                     }
@@ -200,7 +231,11 @@ export default function ReservationPage() {
             <Button
                 style={{marginTop:"16px"}}
                 onClick={(e) => {
-                    setSubmit(true)
+                    if (selectedTime == null || food == null || event == null || quantity == 0) {
+                        alert("Please fill out all fields");
+                        return;
+                    }
+                    createReservation();
                 }}
             >Submit</Button></> : null
             }
