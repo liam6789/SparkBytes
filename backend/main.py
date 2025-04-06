@@ -687,6 +687,48 @@ async def get_host_latest_event(current_user: User = Depends(get_current_user)):
     }
 
 
+# ======================== Host Profile ======================= #
+# Profile contains all events created by host. Split into active and archive sections.
+
+@app.get("/host/events")
+async def get_host_events(current_user: User = Depends(get_current_user)):
+    # Select all fields of events table and the specific food details needed
+    # Filter for just users who are event creators, sort by order for neat display
+    event_response = (
+        supabase.table("events")
+        .select("*, foods(food_id, food_name, quantity)")
+        .eq("creator_id", current_user.user_id)
+        .order("start_time", desc=True)
+        .execute()
+    )
+
+    if event_response.error:
+        raise HTTPException(status_code=500, detail="Failed to fetch events")
+
+    # Get list of events from query
+    all_events = event_response.data
+
+    # Get today's date
+    today_utc = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+
+    # Categorising events as active or archive
+    active = []
+    archived = []
+
+    # Loop through all events of the creator
+    # If start time is greater than today consider active
+    for event in all_events:
+        if event["start_time"] >= today_utc:
+            active.append(event)
+        else:
+            archived.append(event)
+
+    # Get the finalised active-archive lists
+    return {
+        "active_events": active,
+        "archived_events": archived
+    }
+
 # ==================== MAIN ==================== #
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=5001, reload=True)
