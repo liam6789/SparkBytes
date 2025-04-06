@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Typography, Button, Spin } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import EventCards from "../event_card/eventcard";
+import EventCards from "../components/event_card/eventcard";
 
 const { Title, Paragraph } = Typography;
 
