@@ -1,3 +1,6 @@
+//forget password make changes to the msg error msg and success msg is swapped (user w exist get error)
+
+
 'use client';
 
 import React, { useState } from 'react';
@@ -41,14 +44,14 @@ export default function ForgotPasswordPage() {
       alignItems: 'center',
       justifyContent: 'center',
       background: '#f5f7fa',
-      padding: '1'
+      padding: '16px'
     }}>
       <div style={{
         maxWidth: '500px',
         width: '100%',
         backgroundColor: 'white',
         borderRadius: '8px',
-        padding: '2'
+        padding: '32px'
       }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2' }}>
@@ -61,20 +64,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Success and error messages */}
-        {error && (
-          <div style={{
-            color: 'red',
-            padding: '10px',
-            borderRadius: '4px',
-            marginBottom: '10px',
-            backgroundColor: '#ffe6e6'
-          }}>
-          <p>
-            Something went wrong. Please try again.
-          </p>
-          </div>
-        )}
-        {success && (
+        {(success || error) && (
           <div style={{
             color: 'green',
             padding: '10px',
@@ -82,9 +72,9 @@ export default function ForgotPasswordPage() {
             marginBottom: '10px',
             backgroundColor: '#e6ffea'
           }}>
-          <p>
-            If user exists, verification email has been sent. Follow the instructions to reset your password.
-          </p>
+            <p>
+              If user exists, a verification email has been sent. Follow the instructions to reset your password.
+            </p>
           </div>
         )}
 
