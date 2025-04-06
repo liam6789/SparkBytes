@@ -92,6 +92,14 @@ class CreateEvent(BaseModel):
     end: datetime 
     food: list[FoodItem]
 
+class CreateRes(BaseModel):
+    food_id: int
+    food_name: str
+    event_id: int
+    quantity: int
+    pickup_time: datetime
+    note: str
+
 
 # ==================== HELPER FUNCTION ==================== #
 def hash_password(password: str) -> str:
@@ -218,6 +226,63 @@ async def create_event(data: CreateEvent, current_user: User = Depends(get_curre
 
     return {"message": "Success"}
 
+@app.post("/createreservation")
+async def create_reservation(data: CreateRes, current_user: User = Depends(get_current_user)):
+    user_id = current_user.user_id
+    response = (
+        supabase.table("reservations")
+        .insert({"user_id": user_id, "food_id": data.food_id, "food_name": data.food_name, "event_id": data.event_id, "quantity": data.quantity, "res_time": data.pickup_time.isoformat(), "notes": data.note})
+        .execute()
+    )
+    print(response)
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to insert event"
+        )
+    
+    response = (
+        supabase.table("foods")
+        .select("quantity")
+        .eq("food_id", data.food_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch food item"
+        )
+
+    food_quantity = response.data[0]['quantity']
+    new_quantity = food_quantity - data.quantity
+    if new_quantity < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Not enough food available"
+        )
+    elif new_quantity == 0:
+        response = (
+            supabase.table("foods")
+            .delete()
+            .eq("food_id", data.food_id)
+            .execute()
+        )
+    else: 
+        response = (
+            supabase.table("foods")
+            .update({"quantity": new_quantity})
+            .eq("food_id", data.food_id)
+            .execute()
+        )
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update food item"
+        )
+    
+    return {"message": "Success"}
 
 @app.post("/register", response_model=User, status_code=status.HTTP_201_CREATED)
 async def register_user(user_data: UserCreate):
@@ -360,6 +425,138 @@ async def get_events(current_user: User = Depends(get_current_user)):
         })
 
     return events
+
+@app.get("/events/{event_id}")
+async def get_event(event_id: int, current_user: User = Depends(get_current_user)):
+    response = (
+        supabase.table("events")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not found"
+        )
+    
+    if response.data[0]["creator_id"] != current_user.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this event"
+        )
+    
+    event = response.data[0]
+    event_data = {
+        "event_id": event["event_id"],
+        "event_name": event["event_name"],
+        "description": event.get("description"),
+        "date": event["start_time"],
+        "creator_id": event["creator_id"],
+        "start_time": event["start_time"],
+        "last_res_time": event["last_res_time"],
+    }
+    
+    response = (
+        supabase.table("foods")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    food = response.data 
+    if not response.data:
+        food = []
+
+
+    response = (
+        supabase.table("reservations")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    reservations = response.data
+    if not response.data:
+        reservations = []
+
+    return {"event": event_data, "food": food, "reservations": reservations}
+
+@app.post("/events/delete/{event_id}")
+async def delete_event(event_id: int, current_user: User = Depends(get_current_user)):
+    response = (
+        supabase.table("events")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Event not found"
+        )
+    if response.data[0]["creator_id"] != current_user.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to delete this event"
+        )
+    
+    response = (
+        supabase.table("events")
+        .delete()
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete event"
+        )
+    return {"message": "Event deleted successfully"}
+
+@app.get("/active-events")
+async def get_active_events():
+    now = datetime.now(timezone.utc).isoformat()
+
+    response = supabase.table("events").select("*").lte("start_time", now).gte("last_res_time",now).execute()
+    if not response.data:
+        return {"events": []}
+    
+    # Translate the supabase response to a format that frontend can use
+    events = []
+    for event in response.data:
+        events.append({
+            "event_id": event["event_id"],
+            "event_name": event["event_name"],
+            "description": event.get("description"),
+            "date": event["start_time"],
+            "creator_id": event["creator_id"],
+            "created_at": event["created_at"],
+            "last_res_time": event["last_res_time"]
+        })
+    return {"events": events}
+
+@app.get("/get-food/{event_id}")
+async def get_food(event_id: int):
+    response = supabase.table("foods").select("*").eq("event_id", event_id).execute()
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No food items found for this event")
+    
+    # Translate the supabase response to a format that frontend can use
+    foods = []
+    for food in response.data:
+        foods.append({
+            "food_id": food["food_id"],
+            "food_name": food["food_name"],
+            "quantity": food["quantity"],
+            "event_id": food["event_id"]
+        })
+    return {"foods": foods}
 
 # ===== Password: Forgotten and Recovery ===== #
 

@@ -3,6 +3,7 @@
 import React from "react";
 import { Card, Typography, Tag, List, Divider } from "antd";
 import { CalendarOutlined, ClockCircleOutlined, CoffeeOutlined } from "@ant-design/icons";
+import { useRouter } from 'next/navigation';
 import dayjs from "dayjs";
 
 const { Title, Paragraph, Text } = Typography;
@@ -33,6 +34,7 @@ interface EventCardsProps {
 
 // function that renders event cards 
 export default function EventCards({ events }: EventCardsProps) {
+  const router = useRouter();
     // no events are available 
   if (!events || events.length === 0) {
     return (
@@ -49,6 +51,7 @@ export default function EventCards({ events }: EventCardsProps) {
       {events.map((event) => (
         <Card
           key={event.event_id}
+          onClick={()=>{router.push(`/events/${event.event_id}`)}}
           hoverable
           style={{ height: "100%" }}
           cover={

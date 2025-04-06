@@ -3,8 +3,9 @@
 import { Typography, Button, Input, Dropdown, Menu, DatePicker } from "antd";
 import React, { useEffect, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
+import { useRouter } from 'next/navigation';
 import dayjs, { Dayjs } from "dayjs";
-import { EventCreate, CreateFoodItem } from "@/types/types";
+import { CreateFoodItem } from "@/types/types";
 import type { DatePickerProps, GetProps } from "antd";
 
 const  { RangePicker } = DatePicker;
@@ -12,6 +13,7 @@ type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
 
 export default function EventCreationPage() {
+    const router = useRouter()
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [foods, setFoods] = useState<CreateFoodItem[]>([]);
@@ -24,11 +26,8 @@ export default function EventCreationPage() {
     const [quantStr, setQuantStr] = useState("");
     const [validQuant, setValidQuant] = useState(true);
 
-    const [isError, setIsError] = useState(false);
-
     const createevent = async () => {
         const token = localStorage.getItem("accessToken");
-        console.log(token)
         const body = JSON.stringify({
             "name": name,
             "description": description,
@@ -46,20 +45,20 @@ export default function EventCreationPage() {
             body,
         });
         if (res.ok) {
-            setIsError(false)
+            alert("Event created successfully!");
+            router.push('/events')
+            setName("")
+            setDescription("")
+            setFoods([])
+            setStartTime(null)
+            setEndTime(null)
+            setFoodName("")
+            setQuantity(0)
+            setQuantStr("")
+            setValidQuant(true)
         } else {
-            setIsError(true)
+            alert("Failed to create event. Please try again.");
         }
-
-        setName("")
-        setDescription("")
-        setFoods([])
-        setStartTime(null)
-        setEndTime(null)
-        setFoodName("")
-        setQuantity(0)
-        setQuantStr("")
-        setValidQuant(true)
     }
         
 
@@ -155,7 +154,6 @@ export default function EventCreationPage() {
                     Add Item
                 </Button>
             </div>
-            {isError ? <Typography.Paragraph style={{color:"red"}}>Failed to Create Event. Try again!</Typography.Paragraph> : null}
             <div>   
                 <Button
                     onClick={(e) => {
