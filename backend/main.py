@@ -100,6 +100,30 @@ class CreateRes(BaseModel):
     pickup_time: datetime
     note: str
 
+class ReservationData(BaseModel):
+    res_id: int
+    food_id: int
+    food_name: str
+    user_id: int
+    event_id: int
+    quantity: int
+    res_time: datetime
+    notes: str
+
+class FoodData(BaseModel):
+    food_id: int
+    food_name: str
+    quantity: int
+    event_id: int
+
+class UpdateEvent(BaseModel):
+    eventName: str
+    eventDescription: str
+    start: datetime
+    end: datetime
+    foods: list[FoodData]
+    reservations: list[ReservationData]
+
 
 # ==================== HELPER FUNCTION ==================== #
 def hash_password(password: str) -> str:
@@ -225,6 +249,97 @@ async def create_event(data: CreateEvent, current_user: User = Depends(get_curre
             )
 
     return {"message": "Success"}
+
+@app.post("/events/update/{event_id}")
+async def update_event(data: UpdateEvent, event_id : int, current_user: User = Depends(get_current_user)):
+    user_id = current_user.user_id 
+    response = (
+        supabase.table("events")
+        .select("*")
+        .eq("event_id", event_id)
+        .execute()
+    )
+    if not response.data or response.data[0]["creator_id"] != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to update this event"
+        )
+
+    response = (
+        supabase.table("events")
+        .update({"event_name": data.eventName, "description": data.eventDescription, "start_time": data.start.isoformat(), "last_res_time": data.end.isoformat()})
+        .eq("event_id", event_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to insert event"
+        )
+    
+    for food in data.foods:
+        food_id = food.food_id
+        if (food.quantity <= 0):
+            response = (
+                supabase.table("foods")
+                .delete()
+                .eq("food_id", food_id)
+                .execute()
+            )
+        else:
+            response = (
+                supabase.table("foods")
+                .update({"quantity": food.quantity})
+                .eq("food_id", food_id)
+                .execute()
+            )
+            if not response.data:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to update event"
+                )
+
+    for res in data.reservations:
+        res_id = res.res_id
+        food_id = res.food_id
+        if (res.quantity <= 0):
+            response = (
+                supabase.table("reservations")
+                .select("quantity")
+                .eq("res_id", res_id)
+                .execute()
+            )
+            quant = response.data[0]['quantity']
+            response = (
+                supabase.table("foods")
+                .select("quantity")
+                .eq("food_id", food_id)
+                .execute()
+            )
+            if not response.data:
+                response = (
+                    supabase.table("foods")
+                    .insert({"food_name": res.food_name, "quantity": quant, "event_id": event_id})
+                    .execute()
+                )
+            else:
+                currentQuant = response.data[0]['quantity']
+                response = (
+                    supabase.table("foods")
+                    .update({"quantity": quant + currentQuant})
+                    .eq("food_id", food_id)
+                    .execute()
+                )
+            response = (
+                supabase.table("reservations")
+                .delete()
+                .eq("res_id", res_id)
+                .execute()
+            )
+    
+    
+
 
 @app.post("/createreservation")
 async def create_reservation(data: CreateRes, current_user: User = Depends(get_current_user)):
