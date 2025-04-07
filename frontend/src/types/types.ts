@@ -45,4 +45,5 @@ export interface EventData {
     creator_id: number,
     start_time: Date,
     last_res_time: Date
+    foods?: FoodData[]
 }

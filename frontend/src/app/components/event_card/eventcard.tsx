@@ -5,31 +5,32 @@ import { Card, Typography, Tag, List, Divider } from "antd";
 import { CalendarOutlined, ClockCircleOutlined, CoffeeOutlined } from "@ant-design/icons";
 import { useRouter } from 'next/navigation';
 import dayjs from "dayjs";
+import { EventData } from "@/types/types";
 
 const { Title, Paragraph, Text } = Typography;
 
-// food interface to match our database schema
-interface Food {
-  food_id: number;
-  food_name: string;
-  quantity: number;
-  event_id: number;
-}
+// // food interface to match our database schema
+// interface Food {
+//   food_id: number;
+//   food_name: string;
+//   quantity: number;
+//   event_id: number;
+// }
 
-// event interface to match our database schema
-interface Event {
-  event_id: number;
-  event_name: string;
-  description: string | null;
-  date: string; // ISO date string
-  creator_id: number | null;
-  created_at: string; // ISO date string
-  last_res_time: string; // ISO date string
-  foods?: Food[]; // Associated food items
-}
+// // event interface to match our database schema
+// interface Event {
+//   event_id: number;
+//   event_name: string;
+//   description: string | null;
+//   date: string; // ISO date string
+//   creator_id: number | null;
+//   created_at: string; // ISO date string
+//   last_res_time: string; // ISO date string
+//   foods?: Food[]; // Associated food items
+// }
 
 interface EventCardsProps {
-  events: Event[];
+  events: EventData[];
 }
 
 // function that renders event cards 
@@ -73,11 +74,11 @@ export default function EventCards({ events }: EventCardsProps) {
           <div style={{ marginBottom: "12px" }}>
             <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
               <CalendarOutlined style={{ marginRight: "8px" }} />
-              <Text>{dayjs(event.date).format("MMM D, YYYY")}</Text>
+              <Text>{dayjs(event.start_time).format("MMM D, YYYY")}</Text>
             </div>
             <div style={{ display: "flex", alignItems: "center" }}>
               <ClockCircleOutlined style={{ marginRight: "8px" }} />
-              <Text>{dayjs(event.date).format("h:mm A")}</Text>
+              <Text>{dayjs(event.start_time).format("h:mm A")}</Text>
             </div>
           </div>
           
