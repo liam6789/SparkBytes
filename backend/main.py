@@ -483,8 +483,12 @@ async def get_all_events(current_user: User = Depends(get_current_user)):
                     "food_id": food["food_id"],
                     "food_name": food["food_name"],
                     "quantity": food["quantity"],
+<<<<<<< HEAD
                     "event_id": food["event_id"],
                     "dietary_tags": food.get("dietary_tags", "")
+=======
+                    "event_id": food["event_id"]
+>>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
                 } for food in event.get("foods", [])
             ]
         })

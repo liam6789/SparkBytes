@@ -1,19 +1,30 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { Typography, Button, Spin, Select, Space, Tag } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 import EventCards from "../../components/event_card/eventcard";
 
 const { Title, Paragraph } = Typography;
 const { Option } = Select;
+=======
+import { Typography, Button, Spin } from "antd";
+import Link from "next/link";
+import EventCards from "../../components/event_card/eventcard";
+
+const { Title, Paragraph } = Typography;
+>>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
 
 interface Food {
   food_id: number;
   food_name: string;
   quantity: number;
   event_id: number;
+<<<<<<< HEAD
   dietary_tags?: string;
+=======
+>>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
 }
 
 interface Event {
@@ -27,6 +38,7 @@ interface Event {
   foods?: Food[];
 }
 
+<<<<<<< HEAD
 const dietaryOptions = [
   { label: 'Vegetarian', value: 'vegetarian' },
   { label: 'Vegan', value: 'vegan' },
@@ -37,11 +49,14 @@ const dietaryOptions = [
   { label: 'Halal', value: 'halal' }
 ];
 
+=======
+>>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
 export default function UserEventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [activeEvents, setActiveEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+<<<<<<< HEAD
   const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
 
   // fetch events based on filters
@@ -100,12 +115,60 @@ export default function UserEventsPage() {
     fetchEvents(value);
   };
 
+=======
+
+  // fetch all events using the new endpoint
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        
+        if (!token) {
+          throw new Error("No access token found. Please log in again.");
+        }
+
+        const response = await fetch('http://localhost:5001/events/all', {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+        
+        const data = await response.json();
+        setEvents(data);
+
+        // filter active events (events that haven't ended yet)
+        const now = new Date();
+        const active = data.filter((event: Event) => {
+          const endTime = new Date(event.last_res_time);
+          return endTime > now;
+        });
+
+        setActiveEvents(active);
+      } catch (error: any) {
+        console.error("Error fetching events:", error.message);
+        setError("Failed to load events. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+>>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
   const pastEvents = events.filter(event => new Date(event.last_res_time) <= new Date());
 
   return (
     <div style={{ padding: "24px" }}>
       <div style={{ marginBottom: "24px" }}>
         <Title level={1}>Available Events</Title>
+<<<<<<< HEAD
         
         {/* simple dropdown filter */}
         <div style={{ marginTop: "16px", marginBottom: "24px" }}>
@@ -125,6 +188,8 @@ export default function UserEventsPage() {
             </Select>
           </Space>
         </div>
+=======
+>>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
       </div>
 
       {loading ? (
@@ -144,9 +209,13 @@ export default function UserEventsPage() {
         <EventCards events={activeEvents} />
       ) : (
         <Paragraph style={{ textAlign: 'center' }}>
+<<<<<<< HEAD
           {selectedRestrictions.length > 0 
             ? "No events found matching your dietary restrictions. Try adjusting your filters."
             : "No active events available at the moment. Check back later!"}
+=======
+          No active events available at the moment. Check back later!
+>>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
         </Paragraph>
       )}
 
