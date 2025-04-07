@@ -541,6 +541,45 @@ async def get_events(current_user: User = Depends(get_current_user)):
 
     return events
 
+@app.get("/events/all")
+async def get_all_events(current_user: User = Depends(get_current_user)):
+    """
+    Fetch all events across the system (not just those created by the current user)
+    """
+    # fetch all events from the database
+    response = (
+        supabase.table("events")
+        .select("*, foods(*)")  # select events and their associated foods
+        .execute()
+    )
+
+    # if no events found, return an empty list
+    if not response.data:
+        return []
+
+    # transform events to match frontend
+    events = []
+    for event in response.data:
+        events.append({
+            "event_id": event["event_id"],
+            "event_name": event["event_name"],
+            "description": event.get("description"),
+            "date": event["start_time"],
+            "creator_id": event["creator_id"],
+            "created_at": event["created_at"],
+            "last_res_time": event["last_res_time"],
+            "foods": [
+                {
+                    "food_id": food["food_id"],
+                    "food_name": food["food_name"],
+                    "quantity": food["quantity"],
+                    "event_id": food["event_id"]
+                } for food in event.get("foods", [])
+            ]
+        })
+
+    return events
+
 @app.get("/events/{event_id}")
 async def get_event(event_id: int, current_user: User = Depends(get_current_user)):
     response = (
