@@ -84,6 +84,7 @@ class ResetPasswordRequest(BaseModel):  #
 class FoodItem(BaseModel):
     name: str
     quantity: int
+    dietary_tags: str = ""
 
 class CreateEvent(BaseModel):
     name: str
@@ -238,7 +239,7 @@ async def create_event(data: CreateEvent, current_user: User = Depends(get_curre
     for food in data.food:
         response = (
             supabase.table("foods")
-            .insert({"food_name": food.name, "quantity": food.quantity, "event_id": event_id})
+            .insert({"food_name": food.name, "quantity": food.quantity, "event_id": event_id, "dietary_tags": food.dietary_tags})
             .execute()
         )
         # print (response)
@@ -338,6 +339,68 @@ async def update_event(data: UpdateEvent, event_id : int, current_user: User = D
                 .execute()
             )
     
+
+@app.get("/events/filtered")
+async def get_filtered_events(dietary_restrictions: str = "", current_user: User = Depends(get_current_user)):
+    """
+    fetch all events that match the provided dietary restrictions
+    """
+    # parse list of restrictions
+    restrictions = [r.strip() for r in dietary_restrictions.split(",")] if dietary_restrictions else []
+    
+    # if no restrictions provided, return all events
+    if not restrictions:
+        return await get_all_events(current_user)
+    
+    # fetch all events with their foods
+    response = (
+        supabase.table("events")
+        .select("*, foods(*)")
+        .execute()
+    )
+    
+    if not response.data:
+        return []
+    
+    # filter events that have foods matching the restrictions
+    filtered_events = []
+    for event in response.data:
+        # get the foods for this event
+        foods = event.get("foods", [])
+        
+        # check if any food in the event has all the requested dietary tags
+        matching_foods = False
+        for food in foods:
+            food_tags = food.get("dietary_tags", "").lower().split(",")
+            food_tags = [tag.strip() for tag in food_tags]
+            
+            # check if this food meets all the requested restrictions
+            if all(restriction.lower() in food_tags for restriction in restrictions):
+                matching_foods = True
+                break
+        
+        # only include the event if it has matching foods
+        if matching_foods:
+            filtered_events.append({
+                "event_id": event["event_id"],
+                "event_name": event["event_name"],
+                "description": event.get("description"),
+                "date": event["start_time"],
+                "creator_id": event["creator_id"],
+                "created_at": event["created_at"],
+                "last_res_time": event["last_res_time"],
+                "foods": [
+                    {
+                        "food_id": food["food_id"],
+                        "food_name": food["food_name"],
+                        "quantity": food["quantity"],
+                        "event_id": food["event_id"],
+                        "dietary_tags": food.get("dietary_tags", "")
+                    } for food in foods
+                ]
+            })
+    
+    return filtered_events
     
 
 
@@ -573,7 +636,8 @@ async def get_all_events(current_user: User = Depends(get_current_user)):
                     "food_id": food["food_id"],
                     "food_name": food["food_name"],
                     "quantity": food["quantity"],
-                    "event_id": food["event_id"]
+                    "event_id": food["event_id"],
+                    "dietary_tags": food.get("dietary_tags", "")
                 } for food in event.get("foods", [])
             ]
         })
@@ -810,6 +874,7 @@ async def reset_password(request: ResetPasswordRequest):  # ✅ New route for re
     
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token.")
+    
 
 # ======================== Host POV: Latest event ======================= #
 # Define GET endpoint to fetch latest host event

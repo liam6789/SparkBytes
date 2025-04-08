@@ -17,6 +17,7 @@ export interface EventCreate {
 export interface CreateFoodItem {
     name: string,
     quantity: number
+    dietary_tags?: string;
 }
 
 export interface ReservationData {
