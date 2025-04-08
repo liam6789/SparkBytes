@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography, Button, Input, Dropdown, Menu, DatePicker } from "antd";
+import { Typography, Button, Input, Dropdown, Menu, DatePicker, Select, Space, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { DownOutlined } from "@ant-design/icons";
 import { useRouter } from 'next/navigation';
@@ -9,8 +9,18 @@ import { CreateFoodItem } from "@/types/types";
 import type { DatePickerProps, GetProps } from "antd";
 
 const  { RangePicker } = DatePicker;
+const { Option } = Select;
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
+const dietaryOptions = [
+    { label: 'Vegetarian', value: 'vegetarian' },
+    { label: 'Vegan', value: 'vegan' },
+    { label: 'Gluten-Free', value: 'gluten-free' },
+    { label: 'Dairy-Free', value: 'dairy-free' },
+    { label: 'Nut-Free', value: 'nut-free' },
+    { label: 'Kosher', value: 'kosher' },
+    { label: 'Halal', value: 'halal' },
+  ];
 
 export default function EventCreationPage() {
     const router = useRouter()
@@ -25,6 +35,7 @@ export default function EventCreationPage() {
     const [quantity, setQuantity] = useState(0);
     const [quantStr, setQuantStr] = useState("");
     const [validQuant, setValidQuant] = useState(true);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
     const createevent = async () => {
         const token = localStorage.getItem("accessToken");
@@ -61,8 +72,6 @@ export default function EventCreationPage() {
         }
     }
         
-
-
     return (
         <>
             <Typography.Title level={1}>
@@ -133,6 +142,25 @@ export default function EventCreationPage() {
             >
             </Input>
             {validQuant ? null : <Typography.Paragraph style={{color:"red"}}>Enter a valid number</Typography.Paragraph>}
+
+            <Typography.Title level={3}>
+                Dietary Tags
+            </Typography.Title>
+            <Select
+                mode="multiple"
+                allowClear
+                style={{ width: '100%', marginBottom: "16px" }}
+                placeholder="Select dietary tags for this food"
+                value={selectedTags}
+                onChange={(value) => setSelectedTags(value)}
+            >
+                {dietaryOptions.map(option => (
+                    <Option key={option.value} value={option.value}>{option.label}</Option>
+                ))}
+            </Select>        
+
+
+
             <div>
                 <Button
                     onClick={(e) => {
@@ -141,25 +169,49 @@ export default function EventCreationPage() {
                         } else {
                             const item: CreateFoodItem = {
                                 name: foodName,
-                                quantity: quantity
+                                quantity: quantity,
+                                dietary_tags: selectedTags.join(',')
                             }
                             setFoods([...foods, item])
                         }
                         setFoodName("")
                         setQuantStr("")
                         setQuantity(0)
+                        setSelectedTags([]);
                     }}
                     style={{marginTop:"4px"}}
                 >
                     Add Item
                 </Button>
             </div>
+
+            {/* Display added food items with their tags */}
+            {foods.length > 0 && (
+                <div style={{ marginTop: "16px", marginBottom: "16px" }}>
+                    <Typography.Title level={4}>Added Food Items:</Typography.Title>
+                    <ul>
+                        {foods.map((food, index) => (
+                            <li key={index}>
+                                <Space>
+                                    <strong>{food.name}</strong>
+                                    <span>(Qty: {food.quantity})</span>
+                                    {food.dietary_tags && food.dietary_tags.split(',').map(tag => (
+                                        <Tag key={tag} color="blue">{tag}</Tag>
+                                    ))}
+                                </Space>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+    )}
+            
             <div>   
                 <Button
                     onClick={(e) => {
-                        createevent()
+                        createevent();
                     }}
-                    style={{marginTop:"12px"}}
+                    style={{ marginTop: "12px" }}
+                    type="primary"
                 >
                     Create Event
                 </Button>
@@ -167,3 +219,4 @@ export default function EventCreationPage() {
         </>
     );
 }
+
