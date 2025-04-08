@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Typography, Button, Spin, Select, Space, Tag } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 import EventCards from "../../components/event_card/eventcard";
@@ -15,6 +16,14 @@ import EventCards from "../../components/event_card/eventcard";
 
 const { Title, Paragraph } = Typography;
 >>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
+=======
+import { Typography, Button, Spin, Select, Space, Tag } from "antd";
+import { FilterOutlined } from "@ant-design/icons";
+import EventCards from "../../components/event_card/eventcard";
+
+const { Title, Paragraph } = Typography;
+const { Option } = Select;
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
 
 interface Food {
   food_id: number;
@@ -22,9 +31,13 @@ interface Food {
   quantity: number;
   event_id: number;
 <<<<<<< HEAD
+<<<<<<< HEAD
   dietary_tags?: string;
 =======
 >>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
+=======
+  dietary_tags?: string;
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
 }
 
 interface Event {
@@ -39,6 +52,9 @@ interface Event {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
 const dietaryOptions = [
   { label: 'Vegetarian', value: 'vegetarian' },
   { label: 'Vegan', value: 'vegan' },
@@ -49,13 +65,17 @@ const dietaryOptions = [
   { label: 'Halal', value: 'halal' }
 ];
 
+<<<<<<< HEAD
 =======
 >>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
+=======
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
 export default function UserEventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [activeEvents, setActiveEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+<<<<<<< HEAD
 <<<<<<< HEAD
   const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
 
@@ -116,52 +136,70 @@ export default function UserEventsPage() {
   };
 
 =======
+=======
+  const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
 
-  // fetch all events using the new endpoint
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const token = localStorage.getItem("accessToken");
-        
-        if (!token) {
-          throw new Error("No access token found. Please log in again.");
-        }
-
-        const response = await fetch('http://localhost:5001/events/all', {
-          method: 'GET',
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error("Failed to fetch events");
-        }
-        
-        const data = await response.json();
-        setEvents(data);
-
-        // filter active events (events that haven't ended yet)
-        const now = new Date();
-        const active = data.filter((event: Event) => {
-          const endTime = new Date(event.last_res_time);
-          return endTime > now;
-        });
-
-        setActiveEvents(active);
-      } catch (error: any) {
-        console.error("Error fetching events:", error.message);
-        setError("Failed to load events. Please try again later.");
-      } finally {
-        setLoading(false);
+  // fetch events based on filters
+  const fetchEvents = async (restrictions: string[] = []) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("accessToken");
+      
+      if (!token) {
+        throw new Error("No access token found. Please log in again.");
       }
-    };
 
+      // use filtered endpoint if restrictions exist
+      const endpoint = restrictions.length > 0 
+        ? `http://localhost:5001/events/filtered?dietary_restrictions=${restrictions.join(',')}`
+        : 'http://localhost:5001/events/all';
+
+      const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch events");
+      }
+      
+      const data = await response.json();
+      setEvents(data);
+
+      // filter active events
+      const now = new Date();
+      const active = data.filter((event: Event) => {
+        const endTime = new Date(event.last_res_time);
+        return endTime > now;
+      });
+
+      setActiveEvents(active);
+    } catch (error: any) {
+      console.error("Error fetching events:", error.message);
+      setError("Failed to load events. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchEvents();
   }, []);
 
+<<<<<<< HEAD
 >>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
+=======
+  // handle filter changes
+  const handleFilterChange = (value: string[]) => {
+    setSelectedRestrictions(value);
+    fetchEvents(value);
+  };
+
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
   const pastEvents = events.filter(event => new Date(event.last_res_time) <= new Date());
 
   return (
@@ -169,6 +207,9 @@ export default function UserEventsPage() {
       <div style={{ marginBottom: "24px" }}>
         <Title level={1}>Available Events</Title>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
         
         {/* simple dropdown filter */}
         <div style={{ marginTop: "16px", marginBottom: "24px" }}>
@@ -188,8 +229,11 @@ export default function UserEventsPage() {
             </Select>
           </Space>
         </div>
+<<<<<<< HEAD
 =======
 >>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
+=======
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
       </div>
 
       {loading ? (
@@ -210,12 +254,18 @@ export default function UserEventsPage() {
       ) : (
         <Paragraph style={{ textAlign: 'center' }}>
 <<<<<<< HEAD
+<<<<<<< HEAD
           {selectedRestrictions.length > 0 
             ? "No events found matching your dietary restrictions. Try adjusting your filters."
             : "No active events available at the moment. Check back later!"}
 =======
           No active events available at the moment. Check back later!
 >>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
+=======
+          {selectedRestrictions.length > 0 
+            ? "No events found matching your dietary restrictions. Try adjusting your filters."
+            : "No active events available at the moment. Check back later!"}
+>>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
         </Paragraph>
       )}
 
