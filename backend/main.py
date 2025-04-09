@@ -948,6 +948,43 @@ async def get_host_events(current_user: User = Depends(get_current_user)):
         "archived_events": archived
     }
 
+# ======================== User Profile ======================= #
+@app.get("/user/reservations")
+async def get_user_reservations(current_user: User = Depends(get_current_user)):
+    try:
+        # Join reservations with event and food database info
+        response = (
+            supabase.table("reservations")
+            .select("""
+                res_id,
+                res_time,
+                quantity,
+                note,
+                food_name,
+                events (
+                    event_id,
+                    event_name,
+                    description,
+                    start_time,
+                    last_res_time
+                )
+            """)
+            # Filter reservations of certain user
+            .eq("user_id", current_user.user_id)
+            # Descending order
+            .order("res_time", desc=True)
+            .execute()
+        )
+
+        # Check for errors
+        if response.error:
+            raise HTTPException(status_code=500, detail="Error fetching reservations")
+        # Return list of reservation
+        return {"reservations": response.data}
+    # Catch exceptions
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
 # ==================== MAIN ==================== #
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=5001, reload=True)
