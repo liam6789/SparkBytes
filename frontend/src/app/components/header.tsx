@@ -24,25 +24,42 @@ const CustomHeader = () => {
     router.push(menuItems[parsedKey].href);
   };
 
-  return <Header style={{ display: "flex", alignItems: "center", backgroundColor: "#F55536"}}>
-    <div style={{color:'white', marginRight: '16px'}}><strong style={{fontSize:"20px"}}>SparkBytes</strong></div>
-    {menuItems.map(item => (
-        <div 
-          key={item.key} 
-          onClick={() => router.push(item.href)}
+  return (
+    <Header style={{ display: "flex", alignItems: "center", backgroundColor: "#F55536"}}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{color:'white', marginRight: '16px'}}><strong style={{fontSize:"20px"}}>SparkBytes</strong></div>
+      {menuItems.map(item => (
+          <div 
+            key={item.key} 
+            onClick={() => router.push(item.href)}
+            style={{
+              backgroundColor: pathname === item.href ? '#52c41a' : 'transparent',
+              color: 'white',
+              padding: '0px 20px',
+              cursor: 'pointer',
+              display: "flex", 
+              alignItems: "center"
+            }}
+          >
+            {item.label}
+          </div>
+        ))}
+        </div>
+
+        {/* Right side: profile button */}
+        <div
+          onClick={() => router.push('/user-profile')}
           style={{
-            backgroundColor: pathname === item.href ? '#52c41a' : 'transparent',
             color: 'white',
             padding: '0px 20px',
             cursor: 'pointer',
-            display: "flex", 
-            alignItems: "center"
+            fontWeight: 500
           }}
         >
-          {item.label}
+          Profile
         </div>
-      ))}
-  </Header>;
+    </Header>
+  );
 };
 
 export default CustomHeader;
