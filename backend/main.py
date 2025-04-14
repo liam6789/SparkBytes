@@ -13,6 +13,8 @@ from typing import Optional, Literal
 from supabase import create_client, Client
 from dotenv import load_dotenv
 from datetime import datetime, timezone, timedelta
+from enum import Enum
+from typing import Optional, List
 import os
 import jwt
 import bcrypt
@@ -124,6 +126,21 @@ class UpdateEvent(BaseModel):
     end: datetime
     foods: list[FoodData]
     reservations: list[ReservationData]
+
+# class for time filter options
+class TimeFilter(str, Enum):
+    ALL = "all"
+    JUST_STARTED = "just_started"  # Events that started within the last 30 minutes
+    WITHIN_HOUR = "within_hour"    # Events that started within the last 60 minutes
+    ENDING_SOON = "ending_soon"    # Events ending within the next 60 minutes
+    RUNNING_NOW = "running_now"    # Currently active events
+    FRESH_FOOD = "fresh_food"      # Events that have just ended (for fresh food)
+
+# model for combined filters (dietary and time)
+class CombinedFilters(BaseModel):
+    dietary_restrictions: List[str] = []
+    time_filter: TimeFilter = TimeFilter.ALL
+    freshness_window: int = 30  # in minutes, for FRESH_FOOD filter
 
 
 # ==================== HELPER FUNCTION ==================== #
@@ -875,6 +892,148 @@ async def reset_password(request: ResetPasswordRequest):  # ✅ New route for re
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token.")
     
+
+@app.get("/events/filtered")
+async def get_filtered_events(
+    dietary_restrictions: str = "", 
+    time_filter: TimeFilter = TimeFilter.ALL,
+    freshness_window: int = 30,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Fetch all events that match the provided dietary restrictions and time filter
+    """
+    # get current time in universal time
+    now = datetime.now(timezone.utc)
+    
+    # go through list of dietary restrictions
+    restrictions = [r.strip() for r in dietary_restrictions.split(",")] if dietary_restrictions else []
+    
+    # fetch all events with their foods
+    response = (
+        supabase.table("events")
+        .select("*, foods(*)")
+        .execute()
+    )
+    
+    if not response.data:
+        return []
+    
+    filtered_events = []
+    
+    for event in response.data:
+        # go through event times
+        start_time_str = event["start_time"].replace('Z', '+00:00') if 'Z' in event["start_time"] else event["start_time"]
+        last_res_time_str = event["last_res_time"].replace('Z', '+00:00') if 'Z' in event["last_res_time"] else event["last_res_time"]
+        
+        start_time = datetime.fromisoformat(start_time_str)
+        last_res_time = datetime.fromisoformat(last_res_time_str)
+        
+        # apply time filter
+        passes_time_filter = False
+        
+        if time_filter == TimeFilter.ALL:
+            passes_time_filter = True
+            
+        elif time_filter == TimeFilter.JUST_STARTED:
+            # events that started within the last 30 minutes
+            time_since_start = now - start_time
+            passes_time_filter = time_since_start.total_seconds() >= 0 and time_since_start.total_seconds() <= 30 * 60
+            
+        elif time_filter == TimeFilter.WITHIN_HOUR:
+            # events that started within the last 60 minutes
+            time_since_start = now - start_time
+            passes_time_filter = time_since_start.total_seconds() >= 0 and time_since_start.total_seconds() <= 60 * 60
+            
+        elif time_filter == TimeFilter.ENDING_SOON:
+            # events ending within the next 60 minutes
+            time_until_end = last_res_time - now
+            passes_time_filter = time_until_end.total_seconds() >= 0 and time_until_end.total_seconds() <= 60 * 60
+            
+        elif time_filter == TimeFilter.RUNNING_NOW:
+            # currently active events (started but not yet ended)
+            passes_time_filter = start_time <= now and last_res_time >= now
+            
+        elif time_filter == TimeFilter.FRESH_FOOD:
+            # events that have just ended (food should still be fresh)
+            time_since_end = now - last_res_time
+            passes_time_filter = time_since_end.total_seconds() >= 0 and time_since_end.total_seconds() <= freshness_window * 60
+        
+        if not passes_time_filter:
+            continue
+        
+        # apply dietary filter
+        if not restrictions:
+            filtered_events.append(event)
+            continue
+            
+        # check if any food in the event has all the requested dietary tags
+        foods = event.get("foods", [])
+        matching_foods = False
+        
+        for food in foods:
+            food_tags = food.get("dietary_tags", "").lower().split(",")
+            food_tags = [tag.strip() for tag in food_tags]
+            
+            # check if food meets restrictions
+            if all(restriction.lower() in food_tags for restriction in restrictions):
+                matching_foods = True
+                break
+        
+        # include events with matching foods
+        if matching_foods:
+            filtered_events.append(event)
+    
+    # sort events based on the time filter
+    if time_filter == TimeFilter.ENDING_SOON:
+        # sort by how soon they're ending (ascending)
+        filtered_events.sort(key=lambda e: datetime.fromisoformat(e["last_res_time"].replace('Z', '+00:00') if 'Z' in e["last_res_time"] else e["last_res_time"]))
+    elif time_filter == TimeFilter.JUST_STARTED or time_filter == TimeFilter.WITHIN_HOUR:
+        # sort by how recently they started (most recent first)
+        filtered_events.sort(key=lambda e: datetime.fromisoformat(e["start_time"].replace('Z', '+00:00') if 'Z' in e["start_time"] else e["start_time"]), reverse=True)
+    elif time_filter == TimeFilter.FRESH_FOOD:
+        # sort by how recently they ended (most recent first)
+        filtered_events.sort(key=lambda e: now - datetime.fromisoformat(e["last_res_time"].replace('Z', '+00:00') if 'Z' in e["last_res_time"] else e["last_res_time"]))
+    
+    formatted_events = []
+    for event in filtered_events:
+        event_data = {
+            "event_id": event["event_id"],
+            "event_name": event["event_name"],
+            "description": event.get("description"),
+            "date": event["start_time"],
+            "creator_id": event["creator_id"],
+            "created_at": event["created_at"],
+            "last_res_time": event["last_res_time"],
+            "foods": [
+                {
+                    "food_id": food["food_id"],
+                    "food_name": food["food_name"],
+                    "quantity": food["quantity"],
+                    "event_id": food["event_id"],
+                    "dietary_tags": food.get("dietary_tags", "")
+                } for food in event.get("foods", [])
+            ]
+        }
+        
+        if time_filter == TimeFilter.ENDING_SOON:
+            last_res_time = datetime.fromisoformat(event["last_res_time"].replace('Z', '+00:00') if 'Z' in event["last_res_time"] else event["last_res_time"])
+            minutes_until_end = int((last_res_time - now).total_seconds() / 60)
+            event_data["minutes_until_end"] = minutes_until_end
+            
+        elif time_filter == TimeFilter.JUST_STARTED or time_filter == TimeFilter.WITHIN_HOUR:
+            start_time = datetime.fromisoformat(event["start_time"].replace('Z', '+00:00') if 'Z' in event["start_time"] else event["start_time"])
+            minutes_since_start = int((now - start_time).total_seconds() / 60)
+            event_data["minutes_since_start"] = minutes_since_start
+            
+        elif time_filter == TimeFilter.FRESH_FOOD:
+            last_res_time = datetime.fromisoformat(event["last_res_time"].replace('Z', '+00:00') if 'Z' in event["last_res_time"] else event["last_res_time"])
+            minutes_since_end = int((now - last_res_time).total_seconds() / 60)
+            event_data["minutes_since_end"] = minutes_since_end
+        
+        formatted_events.append(event_data)
+    
+    return formatted_events
 
 # ======================== Host POV: Latest event ======================= #
 # Define GET endpoint to fetch latest host event
