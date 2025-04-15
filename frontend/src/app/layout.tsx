@@ -1,10 +1,23 @@
 "use client";
 import React from "react";
 import { Layout } from "antd";
+import { useRouter, usePathname} from "next/navigation";
+import { useEffect } from "react";
 import CustomHeader from "./components/header";
 
 const { Content, Footer } = Layout;
 const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      router.push("/login");
+    }
+  }, [router, pathname])
+
   return (
     <html lang="en">
       <body style={{ margin: 0, padding: 0 }}>
