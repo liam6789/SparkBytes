@@ -1,12 +1,16 @@
 'use client';
 
-import React from "react";
-import { Layout, Menu } from "antd";
+import React, {useEffect, useState} from "react";
+import { Layout, Menu, Modal } from "antd";
 import { MenuInfo } from "rc-menu/lib/interface";
 import { useRouter, usePathname} from "next/navigation";
 
 const { Header } = Layout;
 const CustomHeader = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  // const [userType, setUserType] = useState(''); // 'host' or 'regular-user'
+
   const menuItems = [
     { key: '0', label: 'Home', href: '/'},
     { key: '1', label: 'About', href: '/about'},
@@ -17,6 +21,14 @@ const CustomHeader = () => {
   
   const router = useRouter();
   const pathname = usePathname(); // This is what you use instead of router.pathname
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      setLoggedIn(true);
+    }
+    console.log(loggedIn)
+  },[router, pathname]);
   
   const handleClick = (e: MenuInfo) => {
     const parsedKey = parseInt(e.key);
@@ -58,6 +70,37 @@ const CustomHeader = () => {
         >
           Profile
         </div>
+        {loggedIn ? <><div
+          key={'5'}
+          onClick={() => {
+            setConfirm(true)
+          }}
+          style={{
+            backgroundColor: 'transparent',
+            color: 'white',
+            padding: '0px 20px',
+            cursor: 'pointer',
+            display: "flex", 
+            alignItems: "center"
+          }}
+        >Log Out</div> 
+        <Modal
+            title="Are you sure you want to log out?"
+            open={confirm}
+            okType="danger"
+            onOk={() => {
+                setConfirm(false)
+                localStorage.removeItem('accessToken');
+                setLoggedIn(false);
+                router.push('/login');
+            }}
+            onCancel={() => {
+                setConfirm(false)
+            }}
+        >
+            {"You must log back in to continue if you confirm."}
+        </Modal></>
+        : null}
     </Header>
   );
 };

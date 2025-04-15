@@ -1,14 +1,26 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { ConfigProvider } from "antd";
 import type { AppProps } from "next/app";
+import {useRouter, usePathname} from "next/navigation";
 import LayoutComponent from "./layout";
 
-const App = ({ Component, pageProps }: AppProps) => (
-  <ConfigProvider>
-    <LayoutComponent>
-      <Component {...pageProps} />
-    </LayoutComponent>
-  </ConfigProvider>
-);
+export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    console.log(token)
 
-export default App;
+    if (!token) {
+      router.push("/login");
+    }
+  },[pathname, router]);
+
+  return (
+    <ConfigProvider>
+      <LayoutComponent>
+        <Component {...pageProps} />
+      </LayoutComponent>
+    </ConfigProvider>
+  );
+} 
