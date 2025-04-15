@@ -142,6 +142,11 @@ class CombinedFilters(BaseModel):
     time_filter: TimeFilter = TimeFilter.ALL
     freshness_window: int = 30  # in minutes, for FRESH_FOOD filter
 
+# Model for creating a rating
+class RatingCreate(BaseModel):
+    event_id: int
+    rating: int  # 1-5 stars
+    description: str
 
 # ==================== HELPER FUNCTION ==================== #
 def hash_password(password: str) -> str:
@@ -1037,6 +1042,66 @@ async def get_host_events(current_user: User = Depends(get_current_user)):
         "active_events": active,
         "archived_events": archived
     }
+
+# User rates event they've attended
+@app.post("/rate-event")
+async def rate_event(data: RatingCreate, current_user: User = Depends(get_current_user)):
+
+    # Rating scale 1 to 5
+    if data.rating < 1 or data.rating > 5:
+        raise HTTPException(
+            status_code=400,
+            detail="Rating must be between 1 and 5"
+        )
+
+    # Check user attended event that is to be rated
+    reservation_check = (
+        supabase.table("reservations")
+        .select("res_id")
+        .eq("user_id", current_user.user_id)
+        .eq("event_id", data.event_id)
+        .execute()
+    )
+
+    if not reservation_check.data:
+        raise HTTPException(
+            status_code=403,
+            detail="You can only rate events you have attended"
+        )
+
+    # Add rating to table
+    insert_resp = (
+        supabase.table("ratings")
+        .insert({
+            "event_id": data.event_id,
+            "user_id": current_user.user_id,
+            "rating": data.rating,
+            "description": data.description
+        })
+        .execute()
+    )
+
+    if insert_resp.error:
+        raise HTTPException(status_code=500, detail="Failed to submit rating")
+
+    return {"message": "Rating submitted successfully!"}
+
+# Get ratings for event
+@app.get("/ratings/{event_id}")
+async def get_ratings_for_event(event_id: int):
+    # Return the rating of event
+    response = (
+        supabase.table("ratings")
+        .select("*")
+        .eq("event_id", event_id)
+        .order("id", desc=True)
+        .execute()
+    )
+
+    if response.error:
+        raise HTTPException(status_code=500, detail="Could not fetch ratings")
+
+    return {"ratings": response.data}
 
 # ======================== User Profile ======================= #
 @app.get("/user/reservations")
