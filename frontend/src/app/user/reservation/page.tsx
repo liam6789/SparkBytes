@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { DownOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
-import ReservationTimePicker from "../components/picktime";
+import ReservationTimePicker from "../../components/picktime";
 import { FoodData, EventData } from "@/types/types";
 
 export default function ReservationPage() {

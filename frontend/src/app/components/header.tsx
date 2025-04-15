@@ -9,18 +9,59 @@ const { Header } = Layout;
 const CustomHeader = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  // const [userType, setUserType] = useState(''); // 'host' or 'regular-user'
-
-  const menuItems = [
-    { key: '0', label: 'Home', href: '/'},
-    { key: '1', label: 'About', href: '/about'},
-    { key: '2', label: 'Events', href: '/events'},
-    { key: '3', label: 'Login', href: '/login'},
-    { key: '4', label: 'Reservations', href: '/reservation'}
-  ];
+  const [menuItems, setMenuItems] = useState<{key: string, label: string, href: string}[]>([]);
+  const [userType, setUserType] = useState<string | null>(null);
   
   const router = useRouter();
   const pathname = usePathname(); // This is what you use instead of router.pathname
+
+  useEffect(() => {
+    const fetchType = async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        setMenuItems([
+          { key: "0", label: "Home", href: "/" },
+          { key: "1", label: "About", href: "/about" },
+        ]);
+        setLoggedIn(false);
+        return;
+      }
+      const response = await fetch('http://localhost:5001/me', {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      });
+
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      setUserType(data.role)
+      if (userType === 'event_creator') {
+        const tempItems = [
+          { key: '0', label: 'Home', href: '/'},
+          { key: '1', label: 'About', href: '/about'},
+          { key: '2', label: 'My Events', href: '/host/events'},
+          { key: '3', label: 'Profile', href: '/host/profile'},
+          { key: '4', label: 'Create Event', href: '/host/createevent'}
+        ];
+        setMenuItems(tempItems);
+      } else if (userType === 'regular_user') {
+        const tempItems = [
+          { key: '0', label: 'Home', href: '/'},
+          { key: '1', label: 'About', href: '/about'},
+          { key: '2', label: 'Events', href: '/user/events'},
+          { key: '3', label: 'Profile', href: "/user/profile"},
+          { key: '4', label: 'Create Reservation', href: '/user/reservation'},
+        ];
+        setMenuItems(tempItems);
+      }
+    }
+
+    fetchType();
+  }, [router, pathname, userType]);
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -30,12 +71,12 @@ const CustomHeader = () => {
     console.log(loggedIn)
   },[router, pathname]);
   
-  const handleClick = (e: MenuInfo) => {
-    const parsedKey = parseInt(e.key);
-    if (parsedKey < 0 || parsedKey >= menuItems.length) return;
-    router.push(menuItems[parsedKey].href);
-  };
-
+  // const handleClick = (e: MenuInfo) => {
+  //   const parsedKey = parseInt(e.key);
+  //   if (parsedKey < 0 || parsedKey >= menuItems.length) return;
+  //   router.push(menuItems[parsedKey].href);
+  // };
+  
   return (
     <Header style={{ display: "flex", alignItems: "center", backgroundColor: "#F55536"}}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -59,7 +100,7 @@ const CustomHeader = () => {
         </div>
 
         {/* Right side: profile button */}
-        <div
+        {/* <div
           onClick={() => router.push('/user-profile')}
           style={{
             color: 'white',
@@ -69,7 +110,7 @@ const CustomHeader = () => {
           }}
         >
           Profile
-        </div>
+        </div> */}
         {loggedIn ? <><div
           key={'5'}
           onClick={() => {
@@ -100,7 +141,20 @@ const CustomHeader = () => {
         >
             {"You must log back in to continue if you confirm."}
         </Modal></>
-        : null}
+        : 
+        <div
+          key={'5'}
+          onClick={() => router.push('/login')}
+          style={{
+            backgroundColor: pathname === '/login' ? '#52c41a' : 'transparent',
+            color: 'white',
+            padding: '0px 20px',
+            cursor: 'pointer',
+            display: "flex", 
+            alignItems: "center"
+          }}
+        >Log In</div>
+        }
     </Header>
   );
 };
