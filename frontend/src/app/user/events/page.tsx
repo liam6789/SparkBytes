@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { Typography, Button, Spin, Select, Space, Tag } from "antd";
 import { FilterOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import EventCards from "../../components/eventcard";
@@ -10,55 +8,15 @@ import { EventData } from "../../../types/types";
 
 const { Title, Paragraph } = Typography;
 const { Option } = Select;
-=======
-import { Typography, Button, Spin } from "antd";
-import Link from "next/link";
-import EventCards from "../../components/event_card/eventcard";
-
-const { Title, Paragraph } = Typography;
->>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
-=======
-import { Typography, Button, Spin, Select, Space, Tag } from "antd";
-import { FilterOutlined } from "@ant-design/icons";
-import EventCards from "../../components/event_card/eventcard";
-
-const { Title, Paragraph } = Typography;
-const { Option } = Select;
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
 
 interface Food {
   food_id: number;
   food_name: string;
   quantity: number;
   event_id: number;
-<<<<<<< HEAD
-<<<<<<< HEAD
   dietary_tags?: string;
-=======
->>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
-=======
-  dietary_tags?: string;
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
 }
 
-<<<<<<< HEAD
-interface Event {
-  event_id: number;
-  event_name: string;
-  description: string | null;
-  date: string;
-  creator_id: number | null;
-  created_at: string;
-  last_res_time: string;
-  foods?: Food[];
-}
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
-=======
->>>>>>> 0b8fe20 (implemented event duration filtering so users can view events that just started, ending soon etc)
 const dietaryOptions = [
   { label: 'Vegetarian', value: 'vegetarian' },
   { label: 'Vegan', value: 'vegan' },
@@ -69,13 +27,6 @@ const dietaryOptions = [
   { label: 'Halal', value: 'halal' }
 ];
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
-=======
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
-=======
 // time filter options
 const timeFilterOptions = [
   { label: 'All Events', value: 'all' },
@@ -94,14 +45,11 @@ const freshnessOptions = [
   { label: '2 hours', value: 120 }
 ];
 
->>>>>>> 0b8fe20 (implemented event duration filtering so users can view events that just started, ending soon etc)
 export default function UserEventsPage() {
   const [events, setEvents] = useState<EventData[]>([]);
   const [activeEvents, setActiveEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-<<<<<<< HEAD
-<<<<<<< HEAD
   const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
   const [timeFilter, setTimeFilter] = useState<string>('all');
   const [freshnessWindow, setFreshnessWindow] = useState<number>(30);
@@ -154,83 +102,6 @@ const fetchEvents = async (restrictions: string[] = [], timeFilterValue: string 
     }));
     setEvents(formattedData);
 
-<<<<<<< HEAD
-=======
-=======
-  const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>([]);
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
-
-  // fetch events based on filters
-  const fetchEvents = async (restrictions: string[] = []) => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("accessToken");
-      
-      if (!token) {
-        throw new Error("No access token found. Please log in again.");
-      }
-
-      // use filtered endpoint if restrictions exist
-      const endpoint = restrictions.length > 0 
-        ? `http://localhost:5001/events/filtered?dietary_restrictions=${restrictions.join(',')}`
-        : 'http://localhost:5001/events/all';
-
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error("Failed to fetch events");
-      }
-      
-      const data = await response.json();
-      setEvents(data);
-
-      // filter active events
-      const now = new Date();
-      const active = data.filter((event: Event) => {
-        const endTime = new Date(event.last_res_time);
-        return endTime > now;
-      });
-
-      setActiveEvents(active);
-    } catch (error: any) {
-      console.error("Error fetching events:", error.message);
-      setError("Failed to load events. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-<<<<<<< HEAD
->>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
-=======
-  // handle filter changes
-  const handleFilterChange = (value: string[]) => {
-    setSelectedRestrictions(value);
-    fetchEvents(value);
-  };
-
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
-  const pastEvents = events.filter(event => new Date(event.last_res_time) <= new Date());
-
-  return (
-    <div style={{ padding: "24px" }}>
-      <div style={{ marginBottom: "24px" }}>
-        <Title level={1}>Available Events</Title>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
-=======
     // filter active events
     const now = new Date();
     const active = formattedData.filter((event: EventData) => {
@@ -307,7 +178,6 @@ return (
             ))}
           </Select>
         </Space>
->>>>>>> 0b8fe20 (implemented event duration filtering so users can view events that just started, ending soon etc)
         
         {/* time Filter */}
         <Space direction="vertical" style={{ width: '100%' }}>
@@ -323,57 +193,6 @@ return (
                 <Option key={option.value} value={option.value}>{option.label}</Option>
               ))}
             </Select>
-<<<<<<< HEAD
-          </Space>
-        </div>
-<<<<<<< HEAD
-=======
->>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
-=======
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
-      </div>
-
-      {loading ? (
-        <div style={{ textAlign: "center", margin: "40px 0" }}>
-          <Spin size="large" />
-          <Paragraph style={{ marginTop: "16px" }}>
-            Loading events...
-          </Paragraph>
-        </div>
-      ) : error ? (
-        <div style={{ textAlign: "center", margin: "40px 0" }}>
-          <Paragraph type="danger">
-            {error}
-          </Paragraph>
-        </div>
-      ) : activeEvents.length > 0 ? (
-        <EventCards events={activeEvents} />
-      ) : (
-        <Paragraph style={{ textAlign: 'center' }}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-          {selectedRestrictions.length > 0 
-            ? "No events found matching your dietary restrictions. Try adjusting your filters."
-            : "No active events available at the moment. Check back later!"}
-=======
-          No active events available at the moment. Check back later!
->>>>>>> 5be5b19 (edited events page so that users can see all active/past events and hosts can see active/past events they've created)
-=======
-          {selectedRestrictions.length > 0 
-            ? "No events found matching your dietary restrictions. Try adjusting your filters."
-            : "No active events available at the moment. Check back later!"}
->>>>>>> 4123f05 (implemented event filtering for dietary preferences and added food tags to event creation form)
-        </Paragraph>
-      )}
-
-      {/* show past events */}
-      {pastEvents.length > 0 && (
-        <div style={{ marginTop: "24px" }}>
-          <Title level={2}>Past Events</Title>
-          <EventCards events={pastEvents} />
-        </div>
-      )}
-=======
             
             {/* freshness Window (only show when Fresh Food filter is selected) */}
             {timeFilter === 'fresh_food' && (
@@ -434,7 +253,6 @@ return (
           </div>
         )}
       </div>
->>>>>>> 0b8fe20 (implemented event duration filtering so users can view events that just started, ending soon etc)
     </div>
 
     {loading ? (
