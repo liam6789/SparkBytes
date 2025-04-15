@@ -55,19 +55,7 @@ export default function EventCards({ events }: EventCardsProps) {
           onClick={()=>{router.push(`/events/${event.event_id}`)}}
           hoverable
           style={{ height: "100%" }}
-          cover={
-            // header for the cards
-            <div style={{ 
-              height: "80px", 
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}>
-              <Title level={3} style={{ color: "white", margin: 0 }}>
-                {event.event_name}
-              </Title>
-            </div>
-          }
+          title={event.event_name}
         >
           <Paragraph>{event.description || "No description provided"}</Paragraph>
           
