@@ -676,12 +676,6 @@ async def get_event(event_id: int, current_user: User = Depends(get_current_user
             detail="Event not found"
         )
     
-    if response.data[0]["creator_id"] != current_user.user_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission to access this event"
-        )
-    
     event = response.data[0]
     event_data = {
         "event_id": event["event_id"],

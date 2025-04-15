@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Button, Spin, Select, Space, Tag } from "antd";
 import { FilterOutlined, ClockCircleOutlined } from "@ant-design/icons";
-import EventCards from "../../components/event_card/eventcard";
+import EventCards from "../../components/eventcard";
 import { EventData } from "../../../types/types";
 
 const { Title, Paragraph } = Typography;

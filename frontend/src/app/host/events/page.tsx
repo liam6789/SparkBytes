@@ -10,7 +10,7 @@ import { Typography, Card, Tag, Button, Spin } from "antd";
 import { useRouter } from "next/navigation";
 import { PlusOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import EventCards from "../../components/event_card/eventcard";
+import EventCards from "../../components/eventcard";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -91,7 +91,7 @@ export default function HostEventsPage() {
     <div style={{ padding: "24px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
         <Title level={1}>My Events</Title>
-        <Link href="/createevent">
+        <Link href="../../host/createevent">
           <Button type="primary" icon={<PlusOutlined />} size="large">
             Create Event
           </Button>
