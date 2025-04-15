@@ -3,7 +3,7 @@
 // Imports: components, effects, eventcard component, nav etc
 import React, { useEffect, useState } from 'react';
 import { Typography, Divider, Spin, Alert } from 'antd';
-import EventCards from "../components/event_card/eventcard";
+import EventCards from "../../components/eventcard";
 import { EventData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
