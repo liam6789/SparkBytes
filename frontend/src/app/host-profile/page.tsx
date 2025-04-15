@@ -8,7 +8,7 @@ import { EventData } from '@/types/types';
 import { useRouter } from 'next/navigation';
 
 const { Title } = Typography;
-const router = useRouter();
+//const router = useRouter();
 
 export default function HostProfile() {
   // Local states to store the events

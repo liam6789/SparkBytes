@@ -1016,14 +1016,15 @@ async def get_host_events(current_user: User = Depends(get_current_user)):
         .execute()
     )
 
-    if event_response.error:
-        raise HTTPException(status_code=500, detail="Failed to fetch events")
+    if not event_response.data:
+        return {"active_events": [], "archived_events": []}
 
     # Get list of events from query
     all_events = event_response.data
 
     # Get today's date
-    today_utc = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+    # today_utc = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+    now = datetime.now(timezone.utc).isoformat()
 
     # Categorising events as active or archive
     active = []
@@ -1032,7 +1033,7 @@ async def get_host_events(current_user: User = Depends(get_current_user)):
     # Loop through all events of the creator
     # If start time is greater than today consider active
     for event in all_events:
-        if event["start_time"] >= today_utc:
+        if event["start_time"] <= now and event["last_res_time"] >= now:
             active.append(event)
         else:
             archived.append(event)
@@ -1054,7 +1055,7 @@ async def get_user_reservations(current_user: User = Depends(get_current_user)):
                 res_id,
                 res_time,
                 quantity,
-                note,
+                notes,
                 food_name,
                 events (
                     event_id,
@@ -1070,10 +1071,9 @@ async def get_user_reservations(current_user: User = Depends(get_current_user)):
             .order("res_time", desc=True)
             .execute()
         )
-
         # Check for errors
-        if response.error:
-            raise HTTPException(status_code=500, detail="Error fetching reservations")
+        if not response.data:
+            return {"reservations": []}
         # Return list of reservation
         return {"reservations": response.data}
     # Catch exceptions
