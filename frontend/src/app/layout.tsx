@@ -27,23 +27,16 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
         router.push("/login");
         return;
       }
-  
-      const response = await fetch('http://localhost:5001/me', {
-        method: 'GET',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        }
-      });
-  
-      if (response.ok) {
-        const userData = await response.json();
-        setUserType(userData.role);
-        if (userData.role === 'event_creator' && pathname.startsWith('/user')) {
+      
+      const user = localStorage.getItem("user");
+      if (user) {
+        setUserType(JSON.parse(user).role);
+        const type = JSON.parse(user).role;
+        if (type === 'event_creator' && pathname.startsWith('/user')) {
           router.push('/')
-        } else if (userData.role === 'event_creator' && pathname.startsWith('/events/')) {
+        } else if (type === 'event_creator' && pathname.startsWith('/events/')) {
           router.push(`/host/${pathname}`)
-        } else if (userData.role === 'regular_user' && pathname.startsWith('/host')) {
+        } else if (type === 'regular_user' && pathname.startsWith('/host')) {
           router.push(`/`)
         } else {
           setLoading(false);

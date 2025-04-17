@@ -26,26 +26,17 @@ const CustomHeader = () => {
         setLoggedIn(false);
         return;
       }
-      const response = await fetch('http://localhost:5001/me', {
-        method: 'GET',
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        }
-      });
-
-      if (!response.ok) {
-        return;
+      const user = localStorage.getItem('user')
+      if (user) {
+        setUserType(JSON.parse(user).role)
       }
-      const data = await response.json();
-      setUserType(data.role)
       if (userType === 'event_creator') {
         const tempItems = [
           { key: '0', label: 'Home', href: '/'},
           { key: '1', label: 'About', href: '/about'},
           { key: '2', label: 'My Events', href: '/host/events'},
-          { key: '3', label: 'Profile', href: '/host/profile'},
-          { key: '4', label: 'Create Event', href: '/host/createevent'}
+          { key: '3', label: 'Create Event', href: '/host/createevent'},
+          { key: '4', label: 'Profile', href: '/host/profile'},
         ];
         setMenuItems(tempItems);
       } else if (userType === 'regular_user') {
@@ -53,8 +44,8 @@ const CustomHeader = () => {
           { key: '0', label: 'Home', href: '/'},
           { key: '1', label: 'About', href: '/about'},
           { key: '2', label: 'Events', href: '/user/events'},
-          { key: '3', label: 'Profile', href: "/user/profile"},
-          { key: '4', label: 'Create Reservation', href: '/user/reservation'},
+          { key: '3', label: 'Create Reservation', href: '/user/reservation'},
+          { key: '4', label: 'Profile', href: "/user/profile"},
         ];
         setMenuItems(tempItems);
       }
@@ -78,26 +69,26 @@ const CustomHeader = () => {
   // };
   
   return (
-    <Header style={{ display: "flex", alignItems: "center", backgroundColor: "#F55536"}}>
+    <Header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", backgroundColor: "#F55536"}}>
       <div style={{ display: "flex", alignItems: "center" }}>
-      <div style={{color:'white', marginRight: '16px'}}><strong style={{fontSize:"20px"}}>SparkBytes</strong></div>
-      {menuItems.map(item => (
-          <div 
-            key={item.key} 
-            onClick={() => router.push(item.href)}
-            style={{
-              backgroundColor: pathname === item.href ? '#52c41a' : 'transparent',
-              color: 'white',
-              padding: '0px 20px',
-              cursor: 'pointer',
-              display: "flex", 
-              alignItems: "center"
-            }}
-          >
-            {item.label}
-          </div>
-        ))}
-        </div>
+        <div style={{color:'white', marginRight: '16px'}}><strong style={{fontSize:"20px"}}>SparkBytes</strong></div>
+        {menuItems.map(item => (
+            <div 
+              key={item.key} 
+              onClick={() => router.push(item.href)}
+              style={{
+                backgroundColor: pathname === item.href ? '#52c41a' : 'transparent',
+                color: 'white',
+                padding: '0px 20px',
+                cursor: 'pointer',
+                display: "flex", 
+                alignItems: "center"
+              }}
+            >
+              {item.label}
+            </div>
+          ))}
+      </div>
 
         {/* Right side: profile button */}
         {/* <div
@@ -132,6 +123,8 @@ const CustomHeader = () => {
             onOk={() => {
                 setConfirm(false)
                 localStorage.removeItem('accessToken');
+                localStorage.removeItem('user');
+                setUserType(null);
                 setLoggedIn(false);
                 router.push('/login');
             }}
@@ -143,17 +136,33 @@ const CustomHeader = () => {
         </Modal></>
         : 
         <div
-          key={'5'}
-          onClick={() => router.push('/login')}
-          style={{
-            backgroundColor: pathname === '/login' ? '#52c41a' : 'transparent',
-            color: 'white',
-            padding: '0px 20px',
-            cursor: 'pointer',
-            display: "flex", 
-            alignItems: "center"
-          }}
-        >Log In</div>
+          style={{display:"flex", gap: "20px"}}>
+          <div
+            key={'5'}
+            onClick={() => router.push('/login')}
+            style={{
+              backgroundColor: pathname === '/login' ? '#52c41a' : 'transparent',
+              color: 'white',
+              padding: '0px 20px',
+              cursor: 'pointer',
+              display: "flex", 
+              alignItems: "center"
+            }}
+          >Log In</div>
+          <div
+            key={'6'}
+            onClick={() => router.push('/register')}
+            style={{
+              backgroundColor: pathname === '/register' ? '#52c41a' : 'transparent',
+              color: 'white',
+              padding: '0px 20px',
+              cursor: 'pointer',
+              display: "flex",
+              alignItems: "center"
+            }}
+          > Register
+          </div>
+        </div>
         }
     </Header>
   );
