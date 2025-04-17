@@ -273,7 +273,7 @@ return (
     ) : (
       <Paragraph style={{ textAlign: 'center' }}>
         {hasActiveFilters 
-          ? "No events found matching your filters. Try adjusting your filters."
+          ? "No active events found matching your filters. Try adjusting your filters."
           : "No active events available at the moment. Check back later!"}
       </Paragraph>
     )}
