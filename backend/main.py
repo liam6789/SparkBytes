@@ -94,6 +94,9 @@ class CreateEvent(BaseModel):
     start: datetime
     end: datetime 
     food: list[FoodItem]
+    location_lat: float
+    location_lng: float
+    location_address: str
 
 class CreateRes(BaseModel):
     food_id: int
@@ -241,10 +244,13 @@ async def create_event(data: CreateEvent, current_user: User = Depends(get_curre
     description = data.description
     start_time = data.start.isoformat()
     last_res_time = data.end.isoformat()
+    location_lat = data.location_lat
+    location_lng = data.location_lng
+    location_address = data.location_address
 
     response = (
         supabase.table("events")
-        .insert({"creator_id": creator_id, "event_name": name, "description": description, "start_time": start_time, "last_res_time":last_res_time})
+        .insert({"creator_id": creator_id, "event_name": name, "description": description, "start_time": start_time, "last_res_time":last_res_time, "location_lat": location_lat, "location_lng": location_lng, "location_address": location_address})
         .execute()
     )
 
