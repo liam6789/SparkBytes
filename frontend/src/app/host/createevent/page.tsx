@@ -152,6 +152,32 @@ export default function EventCreationPage() {
                     }
                 }}
             />
+            <Typography.Title level={3}>
+                Event Location
+            </Typography.Title>
+            
+            <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} libraries={["places"]}>
+                <Autocomplete
+                    onLoad={onLoad}
+                    onPlaceChanged={onPlaceChanged}
+                >
+                    <Input placeholder="Search for a location" value={locationStr} onChange={(e) => setLocationStr(e.target.value)}/>
+                </Autocomplete>
+                {location && (
+                    <div style={{ marginTop: "16px", marginBottom: "16px" }}>
+                        <strong>Selected Location:</strong> {location.address}
+                    </div>
+                )}
+                <GoogleMap
+                    mapContainerStyle={mapStyle}
+                    center={defaultCenter}
+                    zoom={15}
+                >
+                    {location && (
+                        <Marker position={{ lat: location.lat, lng: location.lng }} />
+                    )}
+                </GoogleMap>
+            </LoadScript>
 
             <Typography.Title level={2}>
                 Add Food Items
