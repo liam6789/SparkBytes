@@ -2,13 +2,12 @@
 
 // Imports: components, effects, eventcard component, nav etc
 import React, { useEffect, useState } from 'react';
-import { Typography, Divider, Spin, Alert } from 'antd';
-import EventCards from "../../components/eventcard";
+import { Typography, Divider, Spin, Alert, Card, Rate } from 'antd';
 import { EventData } from '@/types/types';
 import { useRouter } from 'next/navigation';
+import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
-const { Title } = Typography;
-//const router = useRouter();
+const { Title, Paragraph, Text } = Typography;
 
 export default function HostProfile() {
   // Local states to store the events
@@ -18,12 +17,11 @@ export default function HostProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Fetch events on load
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        // Token for local storage
         const token = localStorage.getItem('accessToken');
-        // Backend requested
         const res = await fetch('http://localhost:5001/host/events', {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -31,12 +29,10 @@ export default function HostProfile() {
           },
         });
 
-        // Error msg if failed
         if (!res.ok) {
           throw new Error('Failed to load events');
         }
 
-        // Initialising active, archive event lsits
         const data = await res.json();
         setActiveEvents(data.active_events || []);
         setArchivedEvents(data.archived_events || []);
@@ -47,11 +43,10 @@ export default function HostProfile() {
       }
     };
 
-    // Fetch events
     fetchEvents();
   }, []);
 
-  // Loading
+  // Loading spinner
   if (loading) {
     return (
       <div style={{ textAlign: 'center', marginTop: 100 }}>
@@ -60,16 +55,56 @@ export default function HostProfile() {
     );
   }
 
-  // Rendering article card
+  // Render cards for a list of events
+  const renderEventCards = (events: EventData[]) => (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "24px" }}>
+      {events.map((event) => (
+        <Card
+          key={event.event_id}
+          hoverable
+          style={{ height: '100%' }}
+        >
+          <Title level={3}>{event.event_name}</Title>
+          <Paragraph>{event.description || "No description provided"}</Paragraph>
+
+          <div style={{ marginBottom: "12px" }}>
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+              <CalendarOutlined style={{ marginRight: "8px" }} />
+              <Text>{new Date(event.date).toLocaleDateString()}</Text>
+            </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <ClockCircleOutlined style={{ marginRight: "8px" }} />
+              <Text>{new Date(event.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+            </div>
+          </div>
+
+          {/* Show average rating and RSVP count */}
+          <Divider />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <Text strong>Avg Rating: </Text>
+              <Rate disabled allowHalf value={event.average_rating || 0} />
+            </div>
+            <div>
+              <Text strong>RSVPs: </Text>
+              {event.total_rsvp || 0}
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+
+  // Full page render
   return (
     <div style={{ padding: '40px 24px' }}>
       <Title level={2}>Your Active Events</Title>
-      <EventCards events={activeEvents} />
+      {activeEvents.length > 0 ? renderEventCards(activeEvents) : <Paragraph>No active events found.</Paragraph>}
 
       <Divider />
 
       <Title level={2}>Archived Events</Title>
-      <EventCards events={archivedEvents} />
+      {archivedEvents.length > 0 ? renderEventCards(archivedEvents) : <Paragraph>No archived events found.</Paragraph>}
     </div>
   );
 }

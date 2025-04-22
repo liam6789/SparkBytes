@@ -50,4 +50,6 @@ export interface EventData {
     start_time: Date,
     last_res_time: Date
     foods?: FoodData[]
+    average_rating?: number;
+    total_rsvp?: number;
 }
