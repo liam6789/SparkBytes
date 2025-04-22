@@ -1,11 +1,12 @@
 "use client";
 
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Typography, Button, Input, Dropdown, Menu, TimePicker, Table, Modal, DatePicker, GetProps, Divider, InputNumber } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { FoodData, EventData, ReservationData } from "@/types/types";
 import type { TableColumnsType } from 'antd';
+import { GoogleMap, Autocomplete, Marker } from '@react-google-maps/api';
 const  { RangePicker } = DatePicker;
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
@@ -20,6 +21,16 @@ interface ResTableData {
     food_id: string;
     quantity: number;
     res_time: string;
+}
+
+const mapStyle = {
+    height: "300px",
+    width: "500px",
+}
+
+const defaultCenter = {
+    lat: 42.35005952363728, 
+    lng: -71.10318646684273
 }
 
 export default function EventDetails() {
@@ -43,6 +54,29 @@ export default function EventDetails() {
 
     const [editResOpts, setEditResOpts] = useState<ReservationData[]>([]);
     const [filteredResOpts, setFilteredResOpts] = useState<ReservationData[]>([]);
+    const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+    const [location, setLocation] = useState<{ lat: number; lng: number; address: string } | null>(null);
+    const [locationStr, setLocationStr] = useState<string>("");
+
+    const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+        autocompleteRef.current = autocomplete;
+    };
+    
+    const onPlaceChanged = () => {
+        if (autocompleteRef.current) {
+            const place = autocompleteRef.current.getPlace();
+            if (place.geometry) {
+            const lat = place.geometry?.location?.lat();
+            const lng = place.geometry?.location?.lng();
+            setLocation({
+                lat: lat ?? 0,
+                lng: lng ?? 0,
+                address: place.formatted_address ?? "Selected location",
+            });
+            setLocationStr(place.formatted_address ?? "Selected location");
+            }
+        }
+    };
 
     const fetchEventDetails = async () => {
         const token = localStorage.getItem("accessToken");
@@ -95,6 +129,9 @@ export default function EventDetails() {
             "end": endTime?.format(),
             "foods": editFoodOpts,
             "reservations": editResOpts,
+            "location_lat": location?.lat,
+            "location_lng": location?.lng,
+            "location_address": location?.address,
         })
         const res = await fetch(`http://localhost:5001/events/update/${id}`, {
             method: "POST",
@@ -283,6 +320,33 @@ export default function EventDetails() {
                         />:
             <Typography.Title level={4} style={{marginTop: "-8px"}}>{dayjs(event?.start_time).format('MM/DD h:mm A')} - {dayjs(event?.last_res_time).format('MM/DD h:mm A')} </Typography.Title>}
             
+            <Typography.Title level={3}>Location</Typography.Title>
+            {editMode ?
+            <><Autocomplete
+                onLoad={onLoad}
+                onPlaceChanged={onPlaceChanged}
+            >
+                <Input placeholder={"Search for a location"} value={locationStr} onChange={(e) => setLocationStr(e.target.value)}></Input>
+            </Autocomplete>
+            <GoogleMap
+                mapContainerStyle={mapStyle}
+                center={defaultCenter}
+                zoom={15}
+            >
+                <Marker
+                    position={{lat: location?.lat ?? defaultCenter.lat, lng: location?.lng ?? defaultCenter.lng}}
+                />
+            </GoogleMap></> :
+            <GoogleMap
+                mapContainerStyle={mapStyle}
+                center={{lat: location?.lat ?? defaultCenter.lat, lng: location?.lng ?? defaultCenter.lng}}
+                zoom={15}
+            >
+                <Marker
+                    position={{lat: location?.lat ?? defaultCenter.lat, lng: location?.lng ?? defaultCenter.lng}}
+                />
+            </GoogleMap>}
+
             {foodOpts.length != 0 ? 
             <><Typography.Title level={3}>Amount of Unreserved Food</Typography.Title>
             {editMode ? 
