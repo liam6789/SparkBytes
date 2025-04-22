@@ -623,6 +623,9 @@ async def get_events(current_user: User = Depends(get_current_user)):
             "creator_id": event["creator_id"],
             "created_at": event["created_at"],
             "last_res_time": event["last_res_time"],
+            "location_lat": event.get("location_lat"),
+            "location_lng": event.get("location_lng"),
+            "location_address": event.get("location_address"),
             "foods": [
                 {
                     "food_id": food["food_id"],
@@ -662,6 +665,9 @@ async def get_all_events(current_user: User = Depends(get_current_user)):
             "creator_id": event["creator_id"],
             "created_at": event["created_at"],
             "last_res_time": event["last_res_time"],
+            "location_lat": event.get("location_lat"),
+            "location_lng": event.get("location_lng"),
+            "location_address": event.get("location_address"),
             "foods": [
                 {
                     "food_id": food["food_id"],
@@ -1015,6 +1021,9 @@ async def get_filtered_events(
             "creator_id": event["creator_id"],
             "created_at": event["created_at"],
             "last_res_time": event["last_res_time"],
+            "location_lat": event.get("location_lat"),
+            "location_lng": event.get("location_lng"),
+            "location_address": event.get("location_address"),
             "foods": [
                 {
                     "food_id": food["food_id"],

@@ -7,9 +7,9 @@ import { useRouter } from 'next/navigation';
 import dayjs, { Dayjs } from "dayjs";
 import { CreateFoodItem } from "@/types/types";
 import type { DatePickerProps, GetProps } from "antd";
-import { GoogleMap, LoadScript, Autocomplete, Marker } from "@react-google-maps/api";
+import Script from 'next/script';
 
-const  { RangePicker } = DatePicker;
+const { RangePicker } = DatePicker;
 const { Option } = Select;
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
@@ -21,7 +21,7 @@ const dietaryOptions = [
     { label: 'Nut-Free', value: 'nut-free' },
     { label: 'Kosher', value: 'kosher' },
     { label: 'Halal', value: 'halal' },
-  ];
+];
 
 const mapStyle = {
     height: "300px",
@@ -33,8 +33,19 @@ const defaultCenter = {
     lng: -71.10318646684273
 }
 
+// API key 
+const GOOGLE_MAPS_API_KEY = "AIzaSyCoenD_s4ZoOS6izAN8nTjZ76_GyERvWuQ";
+
+// Google globals 
+declare global {
+  interface Window {
+    google: any;
+    initMap: () => void;
+  }
+}
+
 export default function EventCreationPage() {
-    const router = useRouter()
+    const router = useRouter();
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [foods, setFoods] = useState<CreateFoodItem[]>([]);
@@ -48,29 +59,70 @@ export default function EventCreationPage() {
     const [validQuant, setValidQuant] = useState(true);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-    const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+    // Google Maps states
+    const [googleMapsReady, setGoogleMapsReady] = useState(false);
     const [location, setLocation] = useState<{ lat: number; lng: number; address: string } | null>(null);
     const [locationStr, setLocationStr] = useState<string>("");
-
-    const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
-        autocompleteRef.current = autocomplete;
-    };
-
-    const onPlaceChanged = () => {
-        if (autocompleteRef.current) {
-          const place = autocompleteRef.current.getPlace();
-          if (place.geometry) {
-            const lat = place.geometry?.location?.lat();
-            const lng = place.geometry?.location?.lng();
-            setLocation({
-              lat: lat ?? 0,
-              lng: lng ?? 0,
-              address: place.formatted_address ?? "Selected location",
+    
+    // initialize 
+    useEffect(() => {
+        if (!googleMapsReady || !window.google) return;
+        
+        // map container and input elements 
+        const mapContainer = document.getElementById('google-map-container');
+        const searchInput = document.getElementById('location-search-input') as HTMLInputElement;
+        
+        if (!mapContainer || !searchInput) return;
+        
+        try {
+            // initialize the map
+            const map = new window.google.maps.Map(mapContainer, {
+                center: defaultCenter,
+                zoom: 15,
             });
-            setLocationStr(place.formatted_address ?? "Selected location");
-          }
+            
+            // initialize autocomplete
+            const autocomplete = new window.google.maps.places.Autocomplete(searchInput);
+            let marker: google.maps.Marker | null = null;
+            
+            // add place_changed event listener
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                
+                if (place && place.geometry && place.geometry.location) {
+                    const lat = place.geometry.location.lat();
+                    const lng = place.geometry.location.lng();
+                    
+                    // update location state
+                    setLocation({
+                        lat,
+                        lng,
+                        address: place.formatted_address || "Selected location"
+                    });
+                    setLocationStr(place.formatted_address || "Selected location");
+                    
+                    // center map on location 
+                    map.setCenter({ lat, lng });
+                    
+                    // add or update marker 
+                    if (marker) {
+                        marker.setPosition({ lat, lng });
+                    } else {
+                        marker = new window.google.maps.Marker({
+                            position: { lat, lng },
+                            map
+                        });
+                    }
+                }
+            });
+        } catch (error) {
+            console.error("Error initializing Google Maps:", error);
         }
-      };
+    }, [googleMapsReady]);
+
+    const handleGoogleMapsLoaded = () => {
+        setGoogleMapsReady(true);
+    };
 
     const createevent = async () => {
         const token = localStorage.getItem("accessToken");
@@ -112,6 +164,13 @@ export default function EventCreationPage() {
         
     return (
         <>
+            {/* Load Google Maps API */}
+            <Script
+                src={`https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`}
+                onLoad={handleGoogleMapsLoaded}
+                strategy="afterInteractive"
+            />
+            
             <Typography.Title level={1}>
                 Create Event
             </Typography.Title>
@@ -124,8 +183,7 @@ export default function EventCreationPage() {
                 onChange={(e) => {
                     setName(e.target.value)
                 }}
-            >
-            </Input>
+            />
             
             <Typography.Title level={3}>
                 Event Description
@@ -135,8 +193,7 @@ export default function EventCreationPage() {
                 onChange={(e) => {
                     setDescription(e.target.value)
                 }}
-            >
-            </Input>
+            />
 
             <Typography.Title level={3}>
                 Event Time
@@ -156,29 +213,30 @@ export default function EventCreationPage() {
                 Event Location
             </Typography.Title>
             
+            {/* Location search input with specific ID */}
+            <Input
+                id="location-search-input"
+                placeholder="Search for a location"
+                value={locationStr}
+                onChange={(e) => setLocationStr(e.target.value)}
+                style={{ marginBottom: "16px" }}
+            />
             
-            <Autocomplete
-                onLoad={onLoad}
-                onPlaceChanged={onPlaceChanged}
-            >
-                <Input placeholder="Search for a location" value={locationStr} onChange={(e) => setLocationStr(e.target.value)}/>
-            </Autocomplete>
             {location && (
                 <div style={{ marginTop: "16px", marginBottom: "16px" }}>
                     <strong>Selected Location:</strong> {location.address}
                 </div>
             )}
-            <GoogleMap
-                mapContainerStyle={mapStyle}
-                center={defaultCenter}
-                zoom={15}
+            
+            {/* Map container with specific ID */}
+            <div 
+                id="google-map-container" 
+                style={mapStyle}
             >
-                {location && (
-                    <Marker position={{ lat: location.lat, lng: location.lng }} />
-                )}
-            </GoogleMap>
+                {!googleMapsReady && <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>Loading map...</div>}
+            </div>
 
-            <Typography.Title level={2}>
+            <Typography.Title level={2} style={{ marginTop: "24px" }}>
                 Add Food Items
             </Typography.Title>
             <Typography.Title level={3}>
@@ -189,8 +247,7 @@ export default function EventCreationPage() {
                 onChange={(e) => {
                     setFoodName(e.target.value)
                 }}
-            >
-            </Input>
+            />
 
             <Typography.Title level={3}>
                 Quantity of Aforementioned Food Item
@@ -202,8 +259,7 @@ export default function EventCreationPage() {
                     setQuantity(parseInt(e.target.value))
                     setValidQuant(true)
                 }}
-            >
-            </Input>
+            />
             {validQuant ? null : <Typography.Paragraph style={{color:"red"}}>Enter a valid number</Typography.Paragraph>}
 
             <Typography.Title level={3}>
@@ -221,8 +277,6 @@ export default function EventCreationPage() {
                     <Option key={option.value} value={option.value}>{option.label}</Option>
                 ))}
             </Select>        
-
-
 
             <div>
                 <Button
@@ -248,7 +302,7 @@ export default function EventCreationPage() {
                 </Button>
             </div>
 
-            {/* Display added food items with their tags */}
+            {/* added food items with tags */}
             {foods.length > 0 && (
                 <div style={{ marginTop: "16px", marginBottom: "16px" }}>
                     <Typography.Title level={4}>Added Food Items:</Typography.Title>
@@ -266,7 +320,7 @@ export default function EventCreationPage() {
                         ))}
                     </ul>
                 </div>
-    )}
+            )}
             
             <div>   
                 <Button
@@ -282,4 +336,3 @@ export default function EventCreationPage() {
         </>
     );
 }
-
