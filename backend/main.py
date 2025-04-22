@@ -1092,7 +1092,7 @@ async def rate_event(data: RatingCreate, current_user: User = Depends(get_curren
         .execute()
     )
 
-    if insert_resp.error:
+    if not insert_resp.error:
         raise HTTPException(status_code=500, detail="Failed to submit rating")
 
     return {"message": "Rating submitted successfully!"}
