@@ -4,6 +4,7 @@ import { Layout } from "antd";
 import { useRouter, usePathname} from "next/navigation";
 import { useEffect, useState } from "react";
 import CustomHeader from "./components/header";
+import { LoadScript } from "@react-google-maps/api";
 
 const { Content, Footer } = Layout;
 const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
@@ -51,18 +52,20 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
     return (
       <html lang="en">
         <body style={{ margin: 0, padding: 0 }}>
-          <Layout className="layout" style={{ minHeight: "100vh" }}>
-            <CustomHeader/>
-            <Content style={{ padding: "0 50px", marginTop: 0 }}>
-              <div
-                className="site-layout-content"
-                style={{ padding: 24, minHeight: 380, height: "100%" }}
-              >
-                {children}
-              </div>
-            </Content>
-            <Footer style={{ textAlign: 'center' }}>Spark! ©2025 Created by Spark!</Footer>
-          </Layout>
+          <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} libraries={["places"]}>
+            <Layout className="layout" style={{ minHeight: "100vh" }}>
+              <CustomHeader/>
+              <Content style={{ padding: "0 50px", marginTop: 0 }}>
+                <div
+                  className="site-layout-content"
+                  style={{ padding: 24, minHeight: 380, height: "100%" }}
+                >
+                  {children}
+                </div>
+              </Content>
+              <Footer style={{ textAlign: 'center' }}>Spark! ©2025 Created by Spark!</Footer>
+            </Layout>
+          </LoadScript>
         </body>
       </html>
     );

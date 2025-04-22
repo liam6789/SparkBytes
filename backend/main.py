@@ -129,6 +129,9 @@ class UpdateEvent(BaseModel):
     end: datetime
     foods: list[FoodData]
     reservations: list[ReservationData]
+    location_lat: float
+    location_lng: float
+    location_address: str
 
 # class for time filter options
 class TimeFilter(str, Enum):
@@ -296,7 +299,7 @@ async def update_event(data: UpdateEvent, event_id : int, current_user: User = D
 
     response = (
         supabase.table("events")
-        .update({"event_name": data.eventName, "description": data.eventDescription, "start_time": data.start.isoformat(), "last_res_time": data.end.isoformat()})
+        .update({"event_name": data.eventName, "description": data.eventDescription, "start_time": data.start.isoformat(), "last_res_time": data.end.isoformat(), "location_lat": data.location_lat, "location_lng": data.location_lng, "location_address": data.location_address})
         .eq("event_id", event_id)
         .execute()
     )
@@ -696,6 +699,9 @@ async def get_event(event_id: int, current_user: User = Depends(get_current_user
         "creator_id": event["creator_id"],
         "start_time": event["start_time"],
         "last_res_time": event["last_res_time"],
+        "location_lat": event["location_lat"],
+        "location_lng": event["location_lng"],
+        "location_address": event["location_address"],
     }
     
     response = (
