@@ -15,8 +15,16 @@ export default function Home() {
       {/* Hero Section - introductory of homepage*/}
       <main className={styles.main}>
         {/* Display main title */}
+        <img 
+            src="/images/logo.png" // Add image
+            alt="SparkBytes" 
+            style={{ 
+              width: "250px", 
+              height: "auto"
+            }}
+          />
         <Typography.Title level={1} className={styles.title}>
-          Welcome to <span style={{ color: "#1677ff" }}>Spark!Bytes</span>
+          Welcome to <span style={{ color: "#f55436" }}>Spark!Bytes</span>
         </Typography.Title>
         {/* Display paragraph */}
         <Typography.Paragraph className={styles.description}>

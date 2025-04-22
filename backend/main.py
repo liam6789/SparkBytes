@@ -151,8 +151,8 @@ class CombinedFilters(BaseModel):
 # Model for creating a rating
 class RatingCreate(BaseModel):
     event_id: int
-    rating: int  # 1-5 stars
-    description: str
+    rating: int
+    description: Optional[str] = None
 
 # ==================== HELPER FUNCTION ==================== #
 def hash_password(password: str) -> str:
@@ -1078,7 +1078,7 @@ async def rate_event(data: RatingCreate, current_user: User = Depends(get_curren
             "event_id": data.event_id,
             "user_id": current_user.user_id,
             "rating": data.rating,
-            "description": data.description
+            "description": data.description or ""
         })
         .execute()
     )
