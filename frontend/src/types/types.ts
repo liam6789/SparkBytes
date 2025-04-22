@@ -44,6 +44,9 @@ export interface EventData {
     description: string,
     date: Date,
     creator_id: number,
+    location_address: string,
+    location_lat: number,
+    location_lng: number,
     start_time: Date,
     last_res_time: Date
     foods?: FoodData[]

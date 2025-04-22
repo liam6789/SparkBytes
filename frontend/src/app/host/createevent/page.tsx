@@ -1,12 +1,13 @@
 "use client";
 
 import { Typography, Button, Input, Dropdown, Menu, DatePicker, Select, Space, Tag } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { DownOutlined } from "@ant-design/icons";
 import { useRouter } from 'next/navigation';
 import dayjs, { Dayjs } from "dayjs";
 import { CreateFoodItem } from "@/types/types";
 import type { DatePickerProps, GetProps } from "antd";
+import { GoogleMap, LoadScript, Autocomplete, Marker } from "@react-google-maps/api";
 
 const  { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -21,6 +22,16 @@ const dietaryOptions = [
     { label: 'Kosher', value: 'kosher' },
     { label: 'Halal', value: 'halal' },
   ];
+
+const mapStyle = {
+    height: "300px",
+    width: "500px",
+}
+
+const defaultCenter = {
+    lat: 42.35005952363728, 
+    lng: -71.10318646684273
+}
 
 export default function EventCreationPage() {
     const router = useRouter()
@@ -37,6 +48,30 @@ export default function EventCreationPage() {
     const [validQuant, setValidQuant] = useState(true);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
+    const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+    const [location, setLocation] = useState<{ lat: number; lng: number; address: string } | null>(null);
+    const [locationStr, setLocationStr] = useState<string>("");
+
+    const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+        autocompleteRef.current = autocomplete;
+    };
+
+    const onPlaceChanged = () => {
+        if (autocompleteRef.current) {
+          const place = autocompleteRef.current.getPlace();
+          if (place.geometry) {
+            const lat = place.geometry?.location?.lat();
+            const lng = place.geometry?.location?.lng();
+            setLocation({
+              lat: lat ?? 0,
+              lng: lng ?? 0,
+              address: place.formatted_address ?? "Selected location",
+            });
+            setLocationStr(place.formatted_address ?? "Selected location");
+          }
+        }
+      };
+
     const createevent = async () => {
         const token = localStorage.getItem("accessToken");
         const body = JSON.stringify({
@@ -44,7 +79,10 @@ export default function EventCreationPage() {
             "description": description,
             "start": startTime?.format(),
             "end": endTime?.format(),
-            "food": foods
+            "food": foods,
+            "location_lat": location?.lat,
+            "location_lng": location?.lng,
+            "location_address": location?.address,
         })
 
         const res = await fetch(`http://localhost:5001/createevent`, {
@@ -57,7 +95,7 @@ export default function EventCreationPage() {
         });
         if (res.ok) {
             alert("Event created successfully!");
-            router.push('/events')
+            router.push('/host/events')
             setName("")
             setDescription("")
             setFoods([])
@@ -114,6 +152,32 @@ export default function EventCreationPage() {
                     }
                 }}
             />
+            <Typography.Title level={3}>
+                Event Location
+            </Typography.Title>
+            
+            <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} libraries={["places"]}>
+                <Autocomplete
+                    onLoad={onLoad}
+                    onPlaceChanged={onPlaceChanged}
+                >
+                    <Input placeholder="Search for a location" value={locationStr} onChange={(e) => setLocationStr(e.target.value)}/>
+                </Autocomplete>
+                {location && (
+                    <div style={{ marginTop: "16px", marginBottom: "16px" }}>
+                        <strong>Selected Location:</strong> {location.address}
+                    </div>
+                )}
+                <GoogleMap
+                    mapContainerStyle={mapStyle}
+                    center={defaultCenter}
+                    zoom={15}
+                >
+                    {location && (
+                        <Marker position={{ lat: location.lat, lng: location.lng }} />
+                    )}
+                </GoogleMap>
+            </LoadScript>
 
             <Typography.Title level={2}>
                 Add Food Items
