@@ -34,7 +34,7 @@ const defaultCenter = {
 }
 
 // API key 
-const GOOGLE_MAPS_API_KEY = "AIzaSyCoenD_s4ZoOS6izAN8nTjZ76_GyERvWuQ";
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 // Google globals 
 declare global {
