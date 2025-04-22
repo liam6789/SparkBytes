@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { PlusOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import EventCards from "../../components/eventcard";
+import { EventData } from "@/types/types";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -36,8 +37,8 @@ interface Event {
 }
 
 export default function HostEventsPage() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [activeEvents, setActiveEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventData[]>([]);
+  const [activeEvents, setActiveEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
