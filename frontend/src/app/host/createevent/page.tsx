@@ -213,28 +213,27 @@ export default function EventCreationPage() {
                 Event Location
             </Typography.Title>
             
-            {/* Location search input with specific ID */}
-            <Input
-                id="location-search-input"
-                placeholder="Search for a location"
-                value={locationStr}
-                onChange={(e) => setLocationStr(e.target.value)}
-                style={{ marginBottom: "16px" }}
-            />
             
+            <Autocomplete
+                onLoad={onLoad}
+                onPlaceChanged={onPlaceChanged}
+            >
+                <Input placeholder="Search for a location" value={locationStr} onChange={(e) => setLocationStr(e.target.value)}/>
+            </Autocomplete>
             {location && (
                 <div style={{ marginTop: "16px", marginBottom: "16px" }}>
                     <strong>Selected Location:</strong> {location.address}
                 </div>
             )}
-            
-            {/* Map container with specific ID */}
-            <div 
-                id="google-map-container" 
-                style={mapStyle}
+            <GoogleMap
+                mapContainerStyle={mapStyle}
+                center={defaultCenter}
+                zoom={15}
             >
-                {!googleMapsReady && <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>Loading map...</div>}
-            </div>
+                {location && (
+                    <Marker position={{ lat: location.lat, lng: location.lng }} />
+                )}
+            </GoogleMap>
 
             <Typography.Title level={2} style={{ marginTop: "24px" }}>
                 Add Food Items
