@@ -45,7 +45,8 @@ const CustomHeader = () => {
           { key: '1', label: 'About', href: '/about'},
           { key: '2', label: 'Events', href: '/user/events'},
           { key: '3', label: 'Create Reservation', href: '/user/reservation'},
-          { key: '4', label: 'Profile', href: "/user/profile"},
+          { key: '4', label: 'Rating Forme', href: "/user/ratingform"},
+          { key: '5', label: 'Profile', href: "/user/profile"},
         ];
         setMenuItems(tempItems);
       }
