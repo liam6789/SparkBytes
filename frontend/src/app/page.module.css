@@ -166,3 +166,46 @@ a.secondary {
     filter: invert();
   }
 }
+
+{/* ======================== Home page section ======================= */}
+.homeSection {
+  background: url('/images/backgroung.jpeg') no-repeat center center;
+  background-size: cover;
+  padding: 80px 24px;
+  text-align: center;
+  color: black;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.homeTitle {
+  font-size: 48px;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.homePara {
+  max-width: 600px;
+  color: black;
+  margin-bottom: 2rem;
+}
+
+.homeButton {
+  margin-top: 2rem;
+  background-color: #f55436;
+  border-color: #f55436;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 24px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.homeButton:hover {
+  background-color: #d8432c;
+  border-color: #d8432c;
+}
