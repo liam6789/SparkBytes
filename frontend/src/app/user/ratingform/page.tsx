@@ -4,13 +4,29 @@ import React, { useEffect, useState } from "react";
 import { Typography, Input, Button, Rate, Dropdown, message } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 // Interface for attended events
 interface AttendedEvent {
   event_id: number;
   event_name: string;
   description: string;
+}
+
+interface Event {
+    event_id: number,
+    event_name: string,
+    description: string,
+    start_time: string,
+    last_res_time: string,
+}
+interface Reservation {
+    res_id: number,
+    res_time: string,
+    quantity: number,
+    notes: string,
+    food_name: string,
+    events : Event
 }
 
 export default function RateEventPage() {
@@ -41,12 +57,11 @@ export default function RateEventPage() {
             });
 
             const data = await res.json();
-            const attended = data.reservations?.map((r: any) => r.events);
+            const attended = data.reservations?.map((r: Reservation) => r.events).filter((event : AttendedEvent): event is AttendedEvent => event !== undefined && event !== null);
 
-            // Filter to unique events based on ID
             const uniqueEvents = attended.filter(
-                (event: AttendedEvent, index: number, self: AttendedEvent[]) =>
-                    index === self.findIndex((e) => e.event_id === event.event_id)
+            (event: AttendedEvent, index: number, self: AttendedEvent[]) =>
+                index === self.findIndex((e) => e && e.event_id === event.event_id)
             );
 
             // Check if event exists
@@ -94,7 +109,7 @@ export default function RateEventPage() {
             } else {
                 message.error(data.detail || "Failed to submit rating.");
             }
-        } catch (error) {
+        } catch {
             message.error("An error occurred. Please try again.");
         } finally {
             setLoading(false);
@@ -105,7 +120,7 @@ export default function RateEventPage() {
         <div style={{ padding: "40px 24px", maxWidth: 600, margin: "auto" }}>
             <Title level={2}>Rate an Event</Title>
             <Paragraph>
-                Share your thoughts! Rate events you've attended and leave optional feedback.
+                Share your thoughts! Rate events you&apos;ve attended and leave optional feedback.
             </Paragraph>
 
             {/* If user has no attended events */}

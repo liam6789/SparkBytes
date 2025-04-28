@@ -11,12 +11,11 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('regular_user');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
@@ -29,6 +28,7 @@ export default function RegisterPage() {
 
     try {
       // Register the user
+      const role = 'regular_user';
       const registerResponse = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
@@ -37,7 +37,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           email,
           password,
-          role
+          role,
         }),
       });
 
@@ -72,8 +72,10 @@ export default function RegisterPage() {
       
       // Redirect to home page
       router.push('/');
-    } catch (error: any) {
-      setError(error?.message || 'Failed to register. Please try again.');
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error?.message || 'Failed to register. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

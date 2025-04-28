@@ -4,10 +4,12 @@ import dayjs, { Dayjs } from "dayjs";
 
 interface Props {
     lastRes: Dayjs;
+    value: Dayjs | null | undefined;
     onChange: (time: Dayjs | null) => void;
 }
 
-const ReservationTimePicker : React.FC<Props> = ({ lastRes, onChange }) => {
+const ReservationTimePicker : React.FC<Props> = ({ lastRes, value, onChange }) => {
+    console.log("Last Reservation Time: ", lastRes.format("YYYY-MM-DD HH:mm:ss"));
     const now = dayjs();
     const disabledTime = () => {
         const currentHour = now.hour();
@@ -42,10 +44,13 @@ const ReservationTimePicker : React.FC<Props> = ({ lastRes, onChange }) => {
         };
     }
 
+    console.log("Disabled Time: ", disabledTime());
+
     return (
         <TimePicker
+            value={value}
             disabledTime={disabledTime}
-            format={"HH:mm"}
+            format={"h:mm A"}
             hideDisabledOptions
             onChange={onChange}
         ></TimePicker>

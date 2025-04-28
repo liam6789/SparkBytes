@@ -5,7 +5,7 @@ import { Card, Typography, Spin, Alert, Tag, Divider } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 interface Reservation {
   res_id: number;
@@ -47,8 +47,10 @@ export default function MyReservationsPage() {
         setReservations(data.reservations || []);
 
         // Error messages
-      } catch (err: any) {
-        setError(err.message || 'Something went wrong');
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message || 'Something went wrong');
+        }
       } finally {
         setLoading(false);
       }

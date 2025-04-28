@@ -6,14 +6,13 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { Typography, Card, Tag, Button, Spin } from "antd";
-import { useRouter } from "next/navigation";
+import { Typography, Button, Spin } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import EventCards from "../../components/eventcard";
 import { EventData } from "@/types/types";
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 interface Food {
   food_id: number;
@@ -75,8 +74,7 @@ export default function HostEventsPage() {
         });
 
         setActiveEvents(active);
-      } catch (error: any) {
-        console.error("Error fetching events:", error.message);
+      } catch {
         setError("Failed to load events. Please try again later.");
       } finally {
         setLoading(false);
@@ -115,8 +113,8 @@ export default function HostEventsPage() {
       ) : activeEvents.length > 0 ? (
         <EventCards events={activeEvents} />
       ) : (
-        <Paragraph style={{ textAlign: 'center' }}>
-          You haven't created any active events yet.
+        <Paragraph style={{ textAlign: "center" }}>
+          You haven&apos;t created any active events yet.
         </Paragraph>
       )}
 

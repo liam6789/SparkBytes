@@ -40,7 +40,7 @@ app = FastAPI()
 # CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -151,7 +151,7 @@ class CombinedFilters(BaseModel):
 # Model for creating a rating
 class RatingCreate(BaseModel):
     event_id: int
-    rating: int
+    rating: float 
     description: Optional[str] = None
 
 # ==================== HELPER FUNCTION ==================== #
@@ -1059,10 +1059,10 @@ async def get_filtered_events(
 async def rate_event(data: RatingCreate, current_user: User = Depends(get_current_user)):
 
     # Rating scale 1 to 5
-    if data.rating < 1 or data.rating > 5:
+    if data.rating < 0 or data.rating > 5:
         raise HTTPException(
             status_code=400,
-            detail="Rating must be between 1 and 5"
+            detail="Rating must be between 0 and 5"
         )
 
     # Check user attended event that is to be rated
@@ -1092,7 +1092,7 @@ async def rate_event(data: RatingCreate, current_user: User = Depends(get_curren
         .execute()
     )
 
-    if not insert_resp.error:
+    if not insert_resp.data:
         raise HTTPException(status_code=500, detail="Failed to submit rating")
 
     return {"message": "Rating submitted successfully!"}

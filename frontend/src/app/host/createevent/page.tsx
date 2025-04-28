@@ -1,13 +1,12 @@
 "use client";
 
-import { Typography, Button, Input, Dropdown, Menu, DatePicker, Select, Space, Tag } from "antd";
-import React, { useEffect, useState, useRef } from "react";
-import { DownOutlined } from "@ant-design/icons";
+import { Typography, Button, Input, DatePicker, Select, Space, Tag } from "antd";
+import React, { useState, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import dayjs, { Dayjs } from "dayjs";
 import { CreateFoodItem } from "@/types/types";
-import type { DatePickerProps, GetProps } from "antd";
-import { GoogleMap, LoadScript, Autocomplete, Marker } from "@react-google-maps/api";
+import type { GetProps } from "antd";
+import { GoogleMap, Autocomplete, Marker } from "@react-google-maps/api";
 
 const  { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -227,7 +226,7 @@ export default function EventCreationPage() {
 
             <div>
                 <Button
-                    onClick={(e) => {
+                    onClick={() => {
                         if (isNaN(quantity)) {
                             setValidQuant(false)
                         } else {
@@ -271,7 +270,7 @@ export default function EventCreationPage() {
             
             <div>   
                 <Button
-                    onClick={(e) => {
+                    onClick={() => {
                         createevent();
                     }}
                     style={{ marginTop: "12px" }}
