@@ -26,14 +26,8 @@ export default function EventDetails() {
     const [event, setEvent] = useState<EventData | null>(null);
     const [foodOpts, setFoodOpts] = useState<FoodData[]>([]);
 
-    const [startTime, setStartTime] = useState<Dayjs | null | undefined>(null);
-    const [endTime, setEndTime] = useState<Dayjs | null | undefined>(null);
-    const [description, setDescription] = useState("")
-    const [name, setName] = useState<string>("");
-
     const [locationLat, setLocationLat] = useState<number>(0);
     const [locationLng, setLocationLng] = useState<number>(0);
-    const [locationAddress, setLocationAddress] = useState<string>("");
 
     const fetchEventDetails = async () => {
         const token = localStorage.getItem("accessToken");
@@ -49,13 +43,8 @@ export default function EventDetails() {
             const data = await res.json();
             setEvent(data.event);
             setFoodOpts(data.food);
-            setStartTime(dayjs(data.event.start_time))
-            setEndTime(dayjs(data.event.last_res_time))
-            setDescription(data.event.description)
-            setName(data.event.event_name)
             setLocationLat(data.event.location_lat)
             setLocationLng(data.event.location_lng)
-            setLocationAddress(data.event.location_address)
         }
     }
 
