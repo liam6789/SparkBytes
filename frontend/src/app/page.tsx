@@ -1,9 +1,7 @@
 "use client"; // Ensures this runs in the client
 
 // Imports
-import { Typography, Button } from "antd";
-import { Inter } from "next/font/google";
-import Image from "next/image"; 
+import { Typography} from "antd";
 import styles from "./page.module.css";
 
 
