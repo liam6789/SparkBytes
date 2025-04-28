@@ -52,7 +52,7 @@ export default function HostEventsPage() {
           throw new Error("No access token found. Please log in again.");
         }
 
-        const response = await fetch('http://localhost:5001/events', {
+        const response = await fetch('https://sparkbytes.onrender.com/events', {
           method: 'GET',
           headers: {
             "Content-Type": "application/json",

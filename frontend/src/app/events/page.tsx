@@ -20,7 +20,7 @@ export default function EventsRouter() {
         }
 
         // fetch user data to check role
-        const response = await fetch('http://localhost:5001/me', {
+        const response = await fetch('https://sparkbytes.onrender.com/me', {
           method: 'GET',
           headers: {
             "Content-Type": "application/json",

@@ -40,7 +40,7 @@ export default function EventDetails() {
 
     const fetchEventDetails = async () => {
         const token = localStorage.getItem("accessToken");
-        const res = await fetch(`http://localhost:5001/events/${id}`, {
+        const res = await fetch(`https://sparkbytes.onrender.com/events/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

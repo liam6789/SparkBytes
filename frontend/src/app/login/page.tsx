@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5001'; // API URL
+const API_URL = 'https://sparkbytes.onrender.com'; // API URL
 
 export default function LoginPage() {
   const [email, setEmail] = useState(''); // store and update email input

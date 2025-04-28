@@ -33,7 +33,7 @@ export default function RateEventPage() {
             const token = localStorage.getItem("accessToken");
             if (!token) return; // No token -> not logged in
 
-            const res = await fetch("http://localhost:5001/user/reservations", {
+            const res = await fetch("https://sparkbytes.onrender.com/user/reservations", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ export default function RateEventPage() {
         const token = localStorage.getItem("accessToken");
 
         try {
-            const res = await fetch("http://localhost:5001/rate-event", {
+            const res = await fetch("https://sparkbytes.onrender.com/rate-event", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

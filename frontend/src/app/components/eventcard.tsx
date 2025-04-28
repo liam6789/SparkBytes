@@ -39,7 +39,7 @@ const EventCard = ({ event }: { event: EventData }) => {
           return;
         }
         
-        const response = await fetch(`http://localhost:5001/ratings/${event.event_id}`, {
+        const response = await fetch(`https://sparkbytes.onrender.com/ratings/${event.event_id}`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,

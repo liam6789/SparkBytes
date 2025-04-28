@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 
-const API_URL = 'http://localhost:5001'; // Your backend API URL
+const API_URL = 'https://sparkbytes.onrender.com'; // Your backend API URL
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');       // Store email input
