@@ -4,108 +4,83 @@ import { Typography } from "antd";
 
 
 export default function AboutPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: '', content: '' });
-
-  // Handle clicking on a creator
-  const showModal = (creator: { name: string, bio: string }) => {
-    setModalContent({
-      title: creator.name,
-      content: creator.bio,
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  return (
+    return (
     <>
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        padding: "20px",
-        backgroundColor: "white",
-        color: "black",
-        margin: "20px",
-        borderRadius: "8px",
-      }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+            padding: "20px",
+            backgroundColor: "white",
+            color: "black",
+            margin: "20px",
+            borderRadius: "8px",
+          }}
+        >
+    
+    <Typography.Title>About SparkBytes</Typography.Title>
+    <Typography.Paragraph>
+      SparkBytes is a web application designed to help students and campus community members discover events with leftover food. By connecting hungry individuals with surplus food from campus events, SparkBytes reduces food waste while helping students save money and enjoy free meals.
+    </Typography.Paragraph>
 
-{/* === About Section Title === */}
-<Title >About SparkBytes and The Developers!</Title>
+    <Typography.Title>About the Creators</Typography.Title>
+    <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
+          <img 
+            src="/images/mfa.jpeg" 
+            alt="Patty Huang" 
+            style={{ 
+              width: "250px", 
+              height: "auto", 
+              borderRadius: "8px"
+            }}
+          />
+          
+          {/* Patty Huang */}
+          <div>
+            <ul style={{ listStyleType: "none", padding: 0 }}>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Bio:</strong> Patty Huang is a current junior at Boston University. She loves to collect Pokemon cards and puzzle!
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Education:</strong> Boston University, B.A. in Computer Science, estimated to graduate in 2026 
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Profession:</strong> Student at Boston University
+              </li>
+            </ul>
+          </div>
 
-{/* === Image left, text right === */}
-<div style={{
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: "40px"
-}}>
-
-  {/* === Team Logo Image === */}
-  <img
-    src="/images/3heads.jpg"
-    alt="SparkBytes Logo"
-    style={{
-      width: "250px",
-      height: "auto",
-      borderRadius: "12px"
-    }}
-  />
-
-  {/* === Paragraph Text === */}
-  <Paragraph 
-    className={styles.homePara} 
-    style={{ 
-      fontSize: "20px", 
-      maxWidth: "600px", 
-      lineHeight: "1.8",
-      textAlign: "left",
-    }}
-  >
-    We’re the Three Stooges! A team of (you guessed it) three beginner web developers driven by a shared passion for sustainability, accessibility, and community impact. 
-    SparkBytes began as a simple idea to tackle food waste on campus, and it's grown into a project we’re proud of — bringing people together over good food while making a real difference.
-  </Paragraph>
-
-</div>
-
-        <Title className={styles.homeTitle}>About the Creators</Title>
-
-        {/* Popup Creator */}
-        <div style={{width: "100%", display: "flex", gap: "40px", flexWrap: "wrap", marginTop: "20px", justifyContent: "center", alignItems: "center"}}>
-          {creators.map((creator, index) => (
-            <div key={index} style={{ textAlign: "center" }}>
-              <img
-                src={creator.image}
-                alt={creator.name}
-                onClick={() => showModal(creator)}
-                className={styles.profileImage}
-                style={{ cursor: 'pointer' }}
-              />
-              <Paragraph><strong>{creator.name}</strong></Paragraph>
-            </div>
-          ))}
+          {/* Louise Lee */}
+          <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
+          <img 
+            src="/images/" // Add image
+            alt="Louise Lee" 
+            style={{ 
+              width: "250px", 
+              height: "auto", 
+              borderRadius: "8px"
+            }}
+          />
+          <div>
+            <ul style={{ listStyleType: "none", padding: 0 }}>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Bio:</strong> Louise Lee is a junior studying Computer Science and Psychology 
+                at Boston University. She has a passion for the arts, outdoors, and travel.
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Education:</strong> Boston University, B.A. in Computer Science and Psychology, 
+                estimated to graduate in 2026.
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Profession:</strong> Student at Boston University.
+              </li>
+            </ul>
+          </div>
+          </div>
         </div>
       </div>
-
-      {/* Modal Popup */}
-      <Modal
-        title={modalContent.title}
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={700}
-        bodyStyle={{ padding: "20px", fontSize: "20px" }}
-      >
-        <p>{modalContent.content}</p>
-      </Modal>
     </>
   );
 }
