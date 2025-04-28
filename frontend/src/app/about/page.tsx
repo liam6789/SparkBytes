@@ -100,22 +100,33 @@ export default function AboutPage() {
 
 </div>
 
-        <Title>About the Creators</Title>
-
-        {/* Popup Creator */}
-        <div style={{width: "100%", display: "flex", gap: "40px", flexWrap: "wrap", marginTop: "20px", justifyContent: "center", alignItems: "center"}}>
-          {creators.map((creator, index) => (
-            <div key={index} style={{ textAlign: "center" }}>
-              <img
-                src={creator.image}
-                alt={creator.name}
-                onClick={() => showModal(creator)}
-                className={styles.profileImage}
-                style={{ cursor: 'pointer' }}
-              />
-              <Paragraph><strong>{creator.name}</strong></Paragraph>
-            </div>
-          ))}
+          {/* Louise Lee */}
+          <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
+          <img 
+            src="/images/" // Add image
+            alt="Louise Lee" 
+            style={{ 
+              width: "250px", 
+              height: "auto", 
+              borderRadius: "8px"
+            }}
+          />
+          <div>
+            <ul style={{ listStyleType: "none", padding: 0 }}>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Bio:</strong> Louise Lee is a junior studying Computer Science and Psychology 
+                at Boston University. She has a passion for the arts, outdoors, and travel.
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Education:</strong> Boston University, B.A. in Computer Science and Psychology, 
+                estimated to graduate in 2026.
+              </li>
+              <li style={{ marginBottom: "10px" }}>
+                <strong>Profession:</strong> Student at Boston University.
+              </li>
+            </ul>
+          </div>
+          </div>
         </div>
       </div>
 
