@@ -3,9 +3,9 @@
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Typography, Table, Divider} from "antd";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { FoodData, EventData} from "@/types/types";
-import { GoogleMap, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
 // interface FoodTableData {
 //     key: number;
@@ -26,14 +26,12 @@ export default function EventDetails() {
     const [event, setEvent] = useState<EventData | null>(null);
     const [foodOpts, setFoodOpts] = useState<FoodData[]>([]);
 
-    const [startTime, setStartTime] = useState<Dayjs | null | undefined>(null);
-    const [endTime, setEndTime] = useState<Dayjs | null | undefined>(null);
-    const [description, setDescription] = useState("")
-    const [name, setName] = useState<string>("");
-
     const [locationLat, setLocationLat] = useState<number>(0);
     const [locationLng, setLocationLng] = useState<number>(0);
-    const [locationAddress, setLocationAddress] = useState<string>("");
+
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+    });
 
     const fetchEventDetails = async () => {
         const token = localStorage.getItem("accessToken");
@@ -49,13 +47,8 @@ export default function EventDetails() {
             const data = await res.json();
             setEvent(data.event);
             setFoodOpts(data.food);
-            setStartTime(dayjs(data.event.start_time))
-            setEndTime(dayjs(data.event.last_res_time))
-            setDescription(data.event.description)
-            setName(data.event.event_name)
             setLocationLat(data.event.location_lat)
             setLocationLng(data.event.location_lng)
-            setLocationAddress(data.event.location_address)
         }
     }
 
@@ -87,15 +80,15 @@ export default function EventDetails() {
             <Typography.Title level={4} style={{marginTop: "-8px"}}>{dayjs(event?.start_time).format('MM/DD h:mm A')} - {dayjs(event?.last_res_time).format('MM/DD h:mm A')} </Typography.Title>
             
             <Typography.Title level={3}>Location</Typography.Title>
-            <GoogleMap
-                mapContainerStyle={{ width: "500px", height: "300px"}}
-                center={{lat: locationLat, lng: locationLng}}
-                zoom={15}
-            >
-                <Marker
-                    position={{lat: locationLat, lng: locationLng}}
-                />
-            </GoogleMap>
+            {isLoaded && (
+                <GoogleMap
+                    mapContainerStyle={{ width: "500px", height: "300px" }}
+                    center={{ lat: locationLat, lng: locationLng }}
+                    zoom={15}
+                >
+                    <Marker position={{ lat: locationLat, lng: locationLng }} />
+                </GoogleMap>
+            )}
             {foodOpts.length != 0 ? 
             <><Typography.Title level={3}>Amount of Unreserved Food</Typography.Title>
             <Table dataSource={foodData} columns={foodColumns} pagination={false} style={{fontSize: "16px"}}></Table></>
