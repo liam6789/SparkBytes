@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Table, Divider} from "antd";
 import dayjs from "dayjs";
 import { FoodData, EventData} from "@/types/types";
-import { GoogleMap, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
 // interface FoodTableData {
 //     key: number;
@@ -28,6 +28,10 @@ export default function EventDetails() {
 
     const [locationLat, setLocationLat] = useState<number>(0);
     const [locationLng, setLocationLng] = useState<number>(0);
+
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+    });
 
     const fetchEventDetails = async () => {
         const token = localStorage.getItem("accessToken");
@@ -76,15 +80,15 @@ export default function EventDetails() {
             <Typography.Title level={4} style={{marginTop: "-8px"}}>{dayjs(event?.start_time).format('MM/DD h:mm A')} - {dayjs(event?.last_res_time).format('MM/DD h:mm A')} </Typography.Title>
             
             <Typography.Title level={3}>Location</Typography.Title>
+            {isLoaded && (
             <GoogleMap
-                mapContainerStyle={{ width: "500px", height: "300px"}}
-                center={{lat: locationLat, lng: locationLng}}
+                mapContainerStyle={{ width: "500px", height: "300px" }}
+                center={{ lat: locationLat, lng: locationLng }}
                 zoom={15}
             >
-                <Marker
-                    position={{lat: locationLat, lng: locationLng}}
-                />
+                <Marker position={{ lat: locationLat, lng: locationLng }} />
             </GoogleMap>
+            )}
             {foodOpts.length != 0 ? 
             <><Typography.Title level={3}>Amount of Unreserved Food</Typography.Title>
             <Table dataSource={foodData} columns={foodColumns} pagination={false} style={{fontSize: "16px"}}></Table></>
