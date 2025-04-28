@@ -1,9 +1,32 @@
 'use client';
 
-import { Inter } from "next/font/google";
-import { Typography } from "antd";
+import { Typography, Modal } from "antd";
+import Image from "next/image";
+import React, { useState } from "react";
+import styles from "../page.module.css";
 
-const inter = Inter({ subsets: ["latin"]});
+const { Title, Paragraph } = Typography;
+
+const creators = [
+  {
+    name: "Patty Huang",
+    image: "/images/mfa.jpeg",
+    bio: `Patty is a junior at Boston University studying Computer Science.
+          She loves collecting Pokemon cards and solving puzzles!`
+  },
+  {
+    name: "Louise Lee",
+    image: "/images/louise.PNG",
+    bio: `Louise is a junior double majoring in Computer Science and Psychology
+          at Boston University. She enjoys arts, outdoors, and travel!`
+  },
+  {
+    name: "Liam McDonald",
+    image: "/images/", //edit
+    bio: `Liam is a sophomore ...
+    at Boston University. He...!`
+  }
+];
 
 export default function AboutPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +63,7 @@ export default function AboutPage() {
       }}>
 
 {/* === About Section Title === */}
-<Title >About SparkBytes and The Developers!</Title>
+<Title>About SparkBytes and The Developers!</Title>
 
 {/* === Image left, text right === */}
 <div style={{
