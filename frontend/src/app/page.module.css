@@ -207,3 +207,15 @@ a.secondary {
   background-color: #d8432c;
   border-color: #d8432c;
 }
+
+.profileImage {
+  width: 250px;
+  height: auto;
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profileImage:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(243, 105, 77, 0.832); /* Orange glow */
+}
