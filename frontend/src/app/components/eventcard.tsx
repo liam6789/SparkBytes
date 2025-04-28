@@ -62,7 +62,7 @@ const EventCard = ({ event }: { event: EventData }) => {
           setAverageRating(null);
           setTotalRatings(0);
         }
-      } catch (err) {
+      } catch {
         setAverageRating(null);
         setTotalRatings(0);
       } finally {
@@ -78,7 +78,7 @@ const EventCard = ({ event }: { event: EventData }) => {
     if (!date) return "Date not available";
     try {
       return dayjs(date).format("MMM D, YYYY");
-    } catch (e) {
+    } catch {
       return "Invalid date";
     }
   };
@@ -87,7 +87,7 @@ const EventCard = ({ event }: { event: EventData }) => {
     if (!date) return "Time not available";
     try {
       return dayjs(date).format("h:mm A");
-    } catch (e) {
+    } catch {
       return "Invalid time";
     }
   };

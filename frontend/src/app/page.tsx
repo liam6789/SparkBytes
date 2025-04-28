@@ -1,13 +1,9 @@
 "use client"; // Ensures this runs in the client
 
 // Imports
-import { Typography, Button } from "antd";
-import { Inter } from "next/font/google";
-import Image from "next/image"; 
+import { Typography} from "antd";
 import styles from "./page.module.css";
 
-// Load Google Font properly
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
@@ -15,7 +11,7 @@ export default function Home() {
       {/* Hero Section - introductory of homepage*/}
       <main className={styles.main}>
         {/* Display main title */}
-        <img 
+        <img
             src="/images/logo.png" // Add image
             alt="SparkBytes" 
             style={{ 

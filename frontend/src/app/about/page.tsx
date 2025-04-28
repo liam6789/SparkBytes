@@ -1,9 +1,7 @@
 'use client';
 
-import { Inter } from "next/font/google";
 import { Typography } from "antd";
 
-const inter = Inter({ subsets: ["latin"]});
 
 export default function AboutPage() {
     return (

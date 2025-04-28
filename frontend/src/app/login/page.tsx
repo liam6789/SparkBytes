@@ -38,9 +38,11 @@ export default function LoginPage() {
       
       // redirect to home page after successful login
       router.push('/');
-    } catch (error: any) {
+    } catch (error) {
       // login failure -> error message
-      setError(error?.message || 'Failed to login. Please check your credentials.');
+      if (axios.isAxiosError(error)) {
+        setError(error?.message || 'Failed to login. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }

@@ -1,8 +1,7 @@
 'use client';
 
 import React, {useEffect, useState} from "react";
-import { Layout, Menu, Modal } from "antd";
-import { MenuInfo } from "rc-menu/lib/interface";
+import { Layout, Modal } from "antd";
 import { useRouter, usePathname} from "next/navigation";
 
 const { Header } = Layout;

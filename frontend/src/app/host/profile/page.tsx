@@ -2,9 +2,8 @@
 
 // Imports: components, effects, eventcard component, nav etc
 import React, { useEffect, useState } from 'react';
-import { Typography, Divider, Spin, Alert, Card, Rate } from 'antd';
+import { Typography, Divider, Spin, Card, Rate } from 'antd';
 import { EventData } from '@/types/types';
-import { useRouter } from 'next/navigation';
 import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
 const { Title, Paragraph, Text } = Typography;
@@ -15,7 +14,6 @@ export default function HostProfile() {
   const [archivedEvents, setArchivedEvents] = useState<EventData[]>([]);
   // Load and error fetch
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   // Fetch events on load
   useEffect(() => {
@@ -36,8 +34,8 @@ export default function HostProfile() {
         const data = await res.json();
         setActiveEvents(data.active_events || []);
         setArchivedEvents(data.archived_events || []);
-      } catch (err: any) {
-        setError(err.message || 'Something went wrong');
+      } catch  {
+        
       } finally {
         setLoading(false);
       }

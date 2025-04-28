@@ -2,26 +2,23 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Input, Dropdown, Menu, TimePicker, Table, Modal, DatePicker, GetProps, Divider, InputNumber } from "antd";
+import { Typography, Table, Divider} from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { FoodData, EventData, ReservationData } from "@/types/types";
-import type { TableColumnsType } from 'antd';
-const  { RangePicker } = DatePicker;
-type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
-import { GoogleMap, LoadScript, Autocomplete, Marker } from "@react-google-maps/api";
+import { FoodData, EventData} from "@/types/types";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 
-interface FoodTableData {
-    key: number;
-    food_name: string;
-    quantity: number;
-}
+// interface FoodTableData {
+//     key: number;
+//     food_name: string;
+//     quantity: number;
+// }
 
-interface ResTableData {
-    key: number;
-    food_id: string;
-    quantity: number;
-    res_time: string;
-}
+// interface ResTableData {
+//     key: number;
+//     food_id: string;
+//     quantity: number;
+//     res_time: string;
+// }
 
 export default function EventDetails() {
     const router = useRouter()
