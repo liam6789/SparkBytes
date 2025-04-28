@@ -39,7 +39,7 @@ export default function Home() {
               marginBottom: "0px"
             }}
           />
-        <Typography.Title className={styles.homeTitle} style={{ fontSize: "100px"}}>
+        <Typography.Title className={styles.homeTitle} style={{ fontSize: "100px", marginTop: "-50px"}}>
           Welcome to <span style={{ color: "#f55436" }}>Spark!Bytes</span>
         </Typography.Title>
         {/* Display paragraph */}
