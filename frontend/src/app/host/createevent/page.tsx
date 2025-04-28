@@ -142,7 +142,7 @@ export default function EventCreationPage() {
                 Event Time
             </Typography.Title>
             <RangePicker
-                showTime={{ format: 'HH:mm' }}
+                showTime={{ format: 'h:mm A' }}
                 format="YYYY-MM-DD HH:mm"
                 minDate={dayjs()}
                 onOk={(values: RangePickerProps['value']) => {
