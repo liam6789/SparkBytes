@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState, useRef } from 'react';
 import { Typography, Button, Input, Table, Modal, DatePicker, GetProps, Divider, InputNumber } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { FoodData, EventData, ReservationData } from "@/types/types";
+import { FoodData, EventData } from "@/types/types";
 import type { TableColumnsType } from 'antd';
 import { GoogleMap, Autocomplete, Marker } from '@react-google-maps/api';
 const  { RangePicker } = DatePicker;
@@ -21,6 +21,18 @@ interface ResTableData {
     food_id: string;
     quantity: number;
     res_time: string;
+}
+
+interface ReservationData {
+    res_id: number,
+    food_id: number,
+    food_name: string,
+    user_id: number,
+    event_id: number,
+    quantity: number,
+    res_time: number,
+    notes: Text,
+    user_name: Text,
 }
 
 const mapStyle = {
@@ -105,7 +117,6 @@ export default function EventDetails() {
     }
 
     const deleteEvent = async () => {
-        console.log("Reached the call to delete event")
         const token = localStorage.getItem("accessToken");
         const res = await fetch(`https://sparkbytes.onrender.com/events/delete/${id}`, {
             method: "POST",
@@ -163,6 +174,7 @@ export default function EventDetails() {
 
     const resData = resOpts.map((res) => ( {
         key: res.res_id,
+        name: res.user_name,
         food_id: res.food_name,
         quantity: res.quantity,
         res_time: dayjs(res.res_time).format('h:mm A'),
@@ -170,6 +182,7 @@ export default function EventDetails() {
 
     const editResData = filteredResOpts.map((res) => ({
         key: res.res_id,
+        name: res.user_name,
         food_id: res.food_name,
         quantity: res.quantity,
         res_time: dayjs(res.res_time).format('h:mm A'),
@@ -182,10 +195,10 @@ export default function EventDetails() {
 
     const editFoodColumns : TableColumnsType<FoodTableData> = [
         { title: "Food Name", dataIndex: "food_name", key: "food_name"},
-        { title: "Quantity", dataIndex: "quantity", key: "quantity", render: (record: FoodTableData) => 
+        { title: "Quantity", dataIndex: "quantity", key: "quantity", render: (value: number, record: FoodTableData) => 
             <InputNumber
               min={0}
-              value={record.quantity}
+              value={value}
               onChange={(value) => {
                 const newQuantities = editFoodOpts.map(item => 
                     item.food_id === record.key ? {...item, quantity: value ?? 0} : item
@@ -202,18 +215,19 @@ export default function EventDetails() {
                 )
                 setEditFoodOpts(updatedFoodOpts)
                 setFilteredFoodOpts(updatedFoodOpts.filter(item => item.quantity > 0))
-                console.log(updatedFoodOpts)
             }}>Delete</Button>
         },
     ]
 
     const resColumns = [
+        {title: "Reservation Name", dataIndex: "name", key: "name"},
         {title: "Food Name", dataIndex: "food_id", key: "food_id"},
         {title: "Quantity", dataIndex: "quantity", key: "quantity"},
         {title: "Reservation Time", dataIndex: "res_time", key: "res_time"},
     ]
 
     const editResColumns : TableColumnsType<ResTableData> = [
+        {title: "Reservation Name", dataIndex: "name", key: "name"},
         {title: "Food Name", dataIndex: "food_id", key: "food_id"},
         {title: "Quantity", dataIndex: "quantity", key: "quantity"},
         {title: "Reservation Time", dataIndex: "res_time", key: "res_time"},
@@ -278,7 +292,9 @@ export default function EventDetails() {
                         {"You cannot undo this!!!"}
                     </Modal>
                     </> : 
-                    <Button type="primary" onClick={() => setEditMode(true)}>Edit Event</Button>}
+                    <Button type="primary" onClick={() => {
+                        setEditMode(true)
+                    }}>Edit Event</Button>}
 
                     <Button type="primary" onClick={() => setOpen(true)} style={{marginLeft:"6px"}}>Delete Event</Button>
                     <Modal 

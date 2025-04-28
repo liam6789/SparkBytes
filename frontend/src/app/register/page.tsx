@@ -38,6 +38,7 @@ export default function RegisterPage() {
           email,
           password,
           role,
+          name,
         }),
       });
 

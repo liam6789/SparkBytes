@@ -61,6 +61,7 @@ class User(BaseModel):
     user_id: int 
     email: EmailStr
     role: str
+    name: str
 
 # Model for login requests
 class LoginRequest(BaseModel):
@@ -224,7 +225,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         return User(
             user_id=user_data["user_id"],
             email=user_data["email"],
-            role=user_data["role"]
+            role=user_data["role"],
+            name=user_data["name"],
         )
     except jwt.PyJWTError:
         raise HTTPException(
@@ -438,9 +440,10 @@ async def get_filtered_events(dietary_restrictions: str = "", current_user: User
 @app.post("/createreservation")
 async def create_reservation(data: CreateRes, current_user: User = Depends(get_current_user)):
     user_id = current_user.user_id
+    user_name = current_user.name
     response = (
         supabase.table("reservations")
-        .insert({"user_id": user_id, "food_id": data.food_id, "food_name": data.food_name, "event_id": data.event_id, "quantity": data.quantity, "res_time": data.pickup_time.isoformat(), "notes": data.note})
+        .insert({"user_id": user_id, "user_name": user_name, "food_id": data.food_id, "food_name": data.food_name, "event_id": data.event_id, "quantity": data.quantity, "res_time": data.pickup_time.isoformat(), "notes": data.note})
         .execute()
     )
     print(response)
@@ -519,7 +522,8 @@ async def register_user(user_data: UserCreate):
         new_user = {
             "email": user_data.email,
             "password": hashed_password,
-            "role": user_data.role
+            "role": user_data.role,
+            "name": user_data.name
         }
         
         response = supabase.table("users").insert(new_user).execute()
@@ -535,7 +539,8 @@ async def register_user(user_data: UserCreate):
         return User(
             user_id=created_user["user_id"],
             email=created_user["email"],
-            role=created_user["role"]
+            role=created_user["role"],
+            name=created_user["name"],
         )
     
     except Exception as e:
@@ -582,7 +587,8 @@ async def login_user(login_data: LoginRequest):
         user=User(
             user_id=user_data["user_id"],
             email=user_data["email"],
-            role=user_data["role"]
+            role=user_data["role"],
+            name=user_data["name"],
         )
     )
 
