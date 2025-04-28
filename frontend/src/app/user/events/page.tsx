@@ -9,14 +9,6 @@ import { EventData } from "../../../types/types";
 const { Title, Paragraph } = Typography;
 const { Option } = Select;
 
-interface Food {
-  food_id: number;
-  food_name: string;
-  quantity: number;
-  event_id: number;
-  dietary_tags?: string;
-}
-
 const dietaryOptions = [
   { label: 'Vegetarian', value: 'vegetarian' },
   { label: 'Vegan', value: 'vegan' },
@@ -95,7 +87,7 @@ const fetchEvents = async (restrictions: string[] = [], timeFilterValue: string 
     }
     
     const data = await response.json();
-    const formattedData: EventData[] = data.map((event: any) => ({
+    const formattedData: EventData[] = data.map((event: EventData) => ({
       ...event,
       start_time: event.start_time || event.date, // Ensure start_time exists
       date: event.date || event.start_time // Ensure date exists
@@ -110,8 +102,7 @@ const fetchEvents = async (restrictions: string[] = [], timeFilterValue: string 
     });
 
     setActiveEvents(active);
-  } catch (error: any) {
-    console.error("Error fetching events:", error.message);
+  } catch (error) {
     setError("Failed to load events. Please try again later.");
   } finally {
     setLoading(false);

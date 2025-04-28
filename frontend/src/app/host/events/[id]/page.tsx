@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState, useRef } from 'react';
-import { Typography, Button, Input, Dropdown, Menu, TimePicker, Table, Modal, DatePicker, GetProps, Divider, InputNumber } from "antd";
+import { Typography, Button, Input, Table, Modal, DatePicker, GetProps, Divider, InputNumber } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { FoodData, EventData, ReservationData } from "@/types/types";
 import type { TableColumnsType } from 'antd';
@@ -100,6 +100,7 @@ export default function EventDetails() {
             setEditFoodOpts(data.food.map((item : FoodData) => ({...item})))
             setFilteredFoodOpts(data.food.map((item : FoodData) => ({...item})))
             setEditResOpts(data.reservations.map((res: ReservationData) => ({...res})))
+            setLocation({lat: data.event.location_lat, lng: data.event.location_lng, address: data.event.location_address})
         }
     }
 
@@ -181,7 +182,7 @@ export default function EventDetails() {
 
     const editFoodColumns : TableColumnsType<FoodTableData> = [
         { title: "Food Name", dataIndex: "food_name", key: "food_name"},
-        { title: "Quantity", dataIndex: "quantity", key: "quantity", render: (value: any, record: FoodTableData, index: number) => 
+        { title: "Quantity", dataIndex: "quantity", key: "quantity", render: (record: FoodTableData) => 
             <InputNumber
               min={0}
               value={record.quantity}
@@ -194,7 +195,7 @@ export default function EventDetails() {
               }}
             />
         },
-        { title: "Action", dataIndex: "action", key:"action", render: (value: any, record: FoodTableData, index: number) => 
+        { title: "Action", dataIndex: "action", key:"action", render: (record: FoodTableData) => 
             <Button type="primary" onClick={() => {
                 const updatedFoodOpts = editFoodOpts.map(item => 
                     item.food_id === record.key ? {...item, quantity: 0} : item
@@ -216,7 +217,7 @@ export default function EventDetails() {
         {title: "Food Name", dataIndex: "food_id", key: "food_id"},
         {title: "Quantity", dataIndex: "quantity", key: "quantity"},
         {title: "Reservation Time", dataIndex: "res_time", key: "res_time"},
-        {title: "Action", dataIndex: "action", key: "action", render: (value: any, record: ResTableData, index: number) => 
+        {title: "Action", dataIndex: "action", key: "action", render: (record: ResTableData) => 
             <Button type="primary" onClick={() => {
                 const updatedResOpts = editResOpts.map(res => 
                     res.res_id === record.key ? {...res, quantity: 0} : res

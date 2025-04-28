@@ -1,6 +1,6 @@
 "use client";
 
-import { Typography, Button, Input, Dropdown, Menu, TimePicker } from "antd";
+import { Typography, Button, Input, Dropdown } from "antd";
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { DownOutlined } from "@ant-design/icons";
@@ -35,7 +35,7 @@ export default function ReservationPage() {
             "note": note,
         })
 
-        const res = await fetch(`hhttps://sparkbytes.onrender.com/createreservation`, {
+        const res = await fetch(`https://sparkbytes.onrender.com/createreservation`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -123,7 +123,7 @@ export default function ReservationPage() {
         // TODO: Implement backend functionality that will load the max quantity of the selected food option that is available for the 
         // selected event so that they don't enter a value greater than the max.
         const setOpts = (foodItem: FoodData) => {
-            let opts = [];
+            const opts = [];
             for (let i = 1; i <= foodItem.quantity; i++) {
                 opts.push(i);
             }
@@ -205,17 +205,9 @@ export default function ReservationPage() {
             </Typography.Title>
             <ReservationTimePicker
                 lastRes={dayjs(event.last_res_time)}
+                value={selectedTime}
                 onChange={(time) => {
-                    if (time != null) {
-                        const fullDateTime = dayjs()
-                            .hour(time.hour())
-                            .minute(time.minute())
-                            .second(0)
-                            .millisecond(0)
-                        setSelectedTime(fullDateTime);
-                    } else {
-                        setSelectedTime(null);
-                    }
+                    setSelectedTime(time);
                 }}
             >
             </ReservationTimePicker></> : null}
@@ -234,7 +226,7 @@ export default function ReservationPage() {
 
             <Button
                 style={{marginTop:"16px"}}
-                onClick={(e) => {
+                onClick={() => {
                     if (selectedTime == null || food == null || event == null || quantity == 0) {
                         alert("Please fill out all fields");
                         return;

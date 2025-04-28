@@ -4,7 +4,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
 
@@ -15,7 +14,6 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState('');       // Store error messages
   const [success, setSuccess] = useState('');   // Store success messages
   const [loading, setLoading] = useState(false); // Track loading state
-  const router = useRouter(); // Nav between pages
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,8 +27,12 @@ export default function ForgotPasswordPage() {
       const response = await axios.post(`${API_URL}/forgot-password`, { email });
       setSuccess(response.data.message); // Display success message
       setEmail(''); // Clear the email input field
-    } catch (error: any) {
-      setError(error?.response?.data?.detail || 'Something went wrong. Please try again.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(error?.response?.data?.detail || 'Something went wrong. Please try again.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setLoading(false); // Always end with stop loading indicator
     }

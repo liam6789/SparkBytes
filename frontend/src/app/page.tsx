@@ -2,13 +2,10 @@
 
 // Imports
 import { Typography, Button } from "antd";
-import { useRouter } from "next/navigation"; // for navigation
 import { Inter } from "next/font/google";
 import Image from "next/image"; 
 import styles from "./page.module.css";
 
-// Load Google Font properly
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const router = useRouter(); // Initialize router
@@ -30,7 +27,7 @@ export default function Home() {
       {/* Hero Section - introductory of homepage*/}
       <main className={styles.homeSection}>
         {/* Display main title */}
-        <img 
+        <img
             src="/images/logo.png" // Add image
             alt="SparkBytes Logo" 
             style={{ 

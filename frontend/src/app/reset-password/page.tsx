@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 
@@ -43,8 +43,10 @@ export default function ResetPasswordPage() {
       // Redirect to login page after successful password reset
       setTimeout(() => router.push('/login'), 3000);
       
-    } catch (error: any) {
-      setError(error?.response?.data?.detail || 'Failed to reset password. Please try again.');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setError(error?.response?.data?.detail || 'Failed to reset password. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

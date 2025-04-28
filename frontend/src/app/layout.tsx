@@ -11,7 +11,6 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [loading, setLoading] = useState(true);
-  const [userType, setUserType] = useState<string | null>(null);
 
   const publicRoutes = ["/", "/about", "/login", "/register", "/forgot-password", "/reset-password"];
 
@@ -31,7 +30,6 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
       
       const user = localStorage.getItem("user");
       if (user) {
-        setUserType(JSON.parse(user).role);
         const type = JSON.parse(user).role;
         if (type === 'event_creator' && pathname.startsWith('/user')) {
           router.push('/')
