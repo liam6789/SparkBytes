@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Typography, Table, Divider} from "antd";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { FoodData, EventData} from "@/types/types";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 
