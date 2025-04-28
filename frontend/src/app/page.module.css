@@ -185,18 +185,18 @@ a.secondary {
 }
 
 .homePara {
+  width: 100%;
   max-width: 600px;
-  font-size: 30px;
+  font-size: 25px;
   color: black;
-  margin-bottom: 2rem;
 }
 
 .homeButton {
-  margin-top: 2rem;
+  margin-top: 5px;
   background-color: #f55436;
   border-color: #f55436;
   color: white;
-  font-size: 35px;
+  font-size: 30px;
   font-weight: 500;
   padding: 30px 24px;
   border-radius: 8px;
