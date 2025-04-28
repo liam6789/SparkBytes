@@ -60,48 +60,46 @@ export default function AboutPage() {
         margin: "20px",
         borderRadius: "8px",
       }}>
+        
+        {/* === About Section Title === */}
+        <Title>About SparkBytes and The Developers!</Title>
 
-{/* === About Section Title === */}
-<Title>About SparkBytes and The Developers!</Title>
+        {/* === Image left, text right === */}
+        <div style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "40px"
+        }}>
+          {/* === Team Logo Image === */}
+          <img
+            src="/images/3heads.jpg"
+            alt="SparkBytes Logo"
+            style={{
+              width: "250px",
+              height: "auto",
+              borderRadius: "12px"
+            }}
+          />
 
-{/* === Image left, text right === */}
-<div style={{
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: "40px"
-}}>
+          {/* === Paragraph Text === */}
+          <Paragraph 
+            className={styles.homePara} 
+            style={{ 
+              fontSize: "20px", 
+              maxWidth: "600px", 
+              lineHeight: "1.8",
+              textAlign: "left",
+            }}
+          >
+            We&apos;re the Three Stooges! A team of (you guessed it) three beginner web developers driven by a shared passion for sustainability, accessibility, and community impact. 
+            SparkBytes began as a simple idea to tackle food waste on campus, and it&apos;s grown into a project we&apos;re proud of — bringing people together over good food while making a real difference.
+          </Paragraph>
+        </div>
 
-  {/* === Team Logo Image === */}
-  <img
-    src="/images/3heads.jpg"
-    alt="SparkBytes Logo"
-    style={{
-      width: "250px",
-      height: "auto",
-      borderRadius: "12px"
-    }}
-  />
-
-  {/* === Paragraph Text === */}
-  <Paragraph 
-    className={styles.homePara} 
-    style={{ 
-      fontSize: "20px", 
-      maxWidth: "600px", 
-      lineHeight: "1.8",
-      textAlign: "left",
-    }}
-  >
-    We&apos;re the Three Stooges! A team of (you guessed it) three beginner web developers driven by a shared passion for sustainability, accessibility, and community impact. 
-    SparkBytes began as a simple idea to tackle food waste on campus, and it&apos;s grown into a project we&apos;re proud of — bringing people together over good food while making a real difference.
-  </Paragraph>
-
-</div>
-
-          {/* Louise Lee */}
-          <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
+        {/* Louise Lee */}
+        <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start", marginTop: "40px" }}>
           <img 
             src="/images/" // Add image
             alt="Louise Lee" 
@@ -126,8 +124,8 @@ export default function AboutPage() {
               </li>
             </ul>
           </div>
-          </div>
         </div>
+
       </div>
 
       {/* Modal Popup */}
