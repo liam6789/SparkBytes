@@ -1,17 +1,11 @@
 "use client";
 
 import { useParams, useRouter } from 'next/navigation';
-import dynamic from "next/dynamic";
 import React, { useEffect, useState } from 'react';
 import { Typography, Table, Divider} from "antd";
 import dayjs from "dayjs";
 import { FoodData, EventData} from "@/types/types";
-import { GoogleMap as GoogleMapType, Marker, useJsApiLoader } from "@react-google-maps/api";
-
-const GoogleMap = dynamic<React.ComponentProps<typeof GoogleMapType>>(
-    () => import("@react-google-maps/api").then((mod) => mod.GoogleMap),
-    { ssr: false }
-  );
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 
 // interface FoodTableData {
 //     key: number;
@@ -87,13 +81,13 @@ export default function EventDetails() {
             
             <Typography.Title level={3}>Location</Typography.Title>
             {isLoaded && (
-            <GoogleMap
-                mapContainerStyle={{ width: "500px", height: "300px" }}
-                center={{ lat: locationLat, lng: locationLng }}
-                zoom={15}
-            >
-                <Marker position={{ lat: locationLat, lng: locationLng }} />
-            </GoogleMap>
+                <GoogleMap
+                    mapContainerStyle={{ width: "500px", height: "300px" }}
+                    center={{ lat: locationLat, lng: locationLng }}
+                    zoom={15}
+                >
+                    <Marker position={{ lat: locationLat, lng: locationLng }} />
+                </GoogleMap>
             )}
             {foodOpts.length != 0 ? 
             <><Typography.Title level={3}>Amount of Unreserved Food</Typography.Title>
