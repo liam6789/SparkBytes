@@ -1109,7 +1109,7 @@ async def get_ratings_for_event(event_id: int):
         .execute()
     )
 
-    if response.error:
+    if not response.data:
         raise HTTPException(status_code=500, detail="Could not fetch ratings")
 
     return {"ratings": response.data}
