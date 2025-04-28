@@ -6,52 +6,28 @@ import styles from "./page.module.css";
 
 
 export default function Home() {
-  const router = useRouter(); // Initialize router
-
   return (
-    <div
-      className={styles.page}
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #FF7F50, #f5f5f5)",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "40px 24px",
-        textAlign: "center",
-      }}
-    >
+    <div className={styles.page}>
       {/* Hero Section - introductory of homepage*/}
-      <main className={styles.homeSection}>
+      <main className={styles.main}>
         {/* Display main title */}
         <img
             src="/images/logo.png" // Add image
-            alt="SparkBytes Logo" 
+            alt="SparkBytes" 
             style={{ 
-              width: "400px", 
-              height: "auto",
-              marginBottom: "0px"
+              width: "250px", 
+              height: "auto"
             }}
           />
-        <Typography.Title className={styles.homeTitle} style={{ fontSize: "100px", marginTop: "-50px"}}>
+        <Typography.Title level={1} className={styles.title}>
           Welcome to <span style={{ color: "#f55436" }}>Spark!Bytes</span>
         </Typography.Title>
         {/* Display paragraph */}
-        <Typography.Paragraph className={styles.homePara}>
+        <Typography.Paragraph className={styles.description}>
           Spark! Bytes was conceived with a simple idea in mind – to minimize food waste 
           and maximize food sharing within the Boston University community. We recognized 
           the potential of connecting those who have excess food with those who could benefit from it.
         </Typography.Paragraph>
-
-        {/* Sign in Button */}
-        <Button 
-          className={styles.homeButton}
-          size="large"
-          onClick={() => router.push("/login")}
-        >
-          Sign In to Get Started
-        </Button>
       </main>
     </div>
   );
