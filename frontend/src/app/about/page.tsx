@@ -101,7 +101,7 @@ export default function AboutPage() {
 
 </div>
 
-        <Title className={styles.homeTitle}>About the Creators</Title>
+        <Title>About the Creators</Title>
 
         {/* Popup Creator */}
         <div style={{width: "100%", display: "flex", gap: "40px", flexWrap: "wrap", marginTop: "20px", justifyContent: "center", alignItems: "center"}}>
