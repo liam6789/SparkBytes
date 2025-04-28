@@ -80,7 +80,7 @@ const fetchEvents = async (restrictions: string[] = [], timeFilterValue: string 
     }
     
     // determine endpoint
-    const endpoint = `http://localhost:5001/events/filtered?${queryParams.toString()}`;
+    const endpoint = `https://sparkbytes.onrender.com/events/filtered?${queryParams.toString()}`;
 
     const response = await fetch(endpoint, {
       method: 'GET',

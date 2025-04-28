@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const API_URL = 'http://localhost:5001'; // API URL
+const API_URL = 'https://sparkbytes.onrender.com'; // API URL
 
 export default function RegisterPage() {
   const [name, setName] = useState('');

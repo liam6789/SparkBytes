@@ -80,7 +80,7 @@ export default function EventDetails() {
 
     const fetchEventDetails = async () => {
         const token = localStorage.getItem("accessToken");
-        const res = await fetch(`http://localhost:5001/events/${id}`, {
+        const res = await fetch(`https://sparkbytes.onrender.com/events/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export default function EventDetails() {
     const deleteEvent = async () => {
         console.log("Reached the call to delete event")
         const token = localStorage.getItem("accessToken");
-        const res = await fetch(`http://localhost:5001/events/delete/${id}`, {
+        const res = await fetch(`https://sparkbytes.onrender.com/events/delete/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -133,7 +133,7 @@ export default function EventDetails() {
             "location_lng": location?.lng,
             "location_address": location?.address,
         })
-        const res = await fetch(`http://localhost:5001/events/update/${id}`, {
+        const res = await fetch(`https://sparkbytes.onrender.com/events/update/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
