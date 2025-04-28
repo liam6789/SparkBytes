@@ -102,7 +102,7 @@ const fetchEvents = async (restrictions: string[] = [], timeFilterValue: string 
     });
 
     setActiveEvents(active);
-  } catch (error) {
+  } catch {
     setError("Failed to load events. Please try again later.");
   } finally {
     setLoading(false);
