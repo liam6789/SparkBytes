@@ -39,7 +39,7 @@ const EventCard = ({ event }: { event: EventData }) => {
           return;
         }
         
-        const response = await fetch(`http://localhost:5001/ratings/${event.event_id}`, {
+        const response = await fetch(`https://sparkbytes.onrender.com/ratings/${event.event_id}`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -55,7 +55,7 @@ const EventCard = ({ event }: { event: EventData }) => {
         
         // calcualte average rating
         if (data.ratings && data.ratings.length > 0) {
-          const sum = data.ratings.reduce((acc: number, r: any) => acc + r.rating, 0);
+          const sum = data.ratings.reduce((acc: number, r: { rating: number }) => acc + r.rating, 0);
           setAverageRating(sum / data.ratings.length);
           setTotalRatings(data.ratings.length);
         } else {
@@ -74,7 +74,7 @@ const EventCard = ({ event }: { event: EventData }) => {
   }, [event.event_id]);
 
   // format dates
-  const formatDate = (date: any) => {
+  const formatDate = (date: string | Date | null | undefined) => {
     if (!date) return "Date not available";
     try {
       return dayjs(date).format("MMM D, YYYY");
@@ -83,7 +83,7 @@ const EventCard = ({ event }: { event: EventData }) => {
     }
   };
 
-  const formatTime = (date: any) => {
+  const formatTime = (date: string | Date | null | undefined) => {
     if (!date) return "Time not available";
     try {
       return dayjs(date).format("h:mm A");

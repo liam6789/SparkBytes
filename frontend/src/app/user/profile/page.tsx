@@ -33,7 +33,7 @@ export default function MyReservationsPage() {
       try {
         // Auth token and API requestion
         const token = localStorage.getItem('accessToken');
-        const res = await fetch('http://localhost:5001/user/reservations', {
+        const res = await fetch('https://sparkbytes.onrender.com/user/reservations', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

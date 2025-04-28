@@ -22,7 +22,7 @@ export default function HostProfile() {
     const fetchEvents = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-        const res = await fetch('http://localhost:5001/host/events', {
+        const res = await fetch('https://sparkbytes.onrender.com/host/events', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',

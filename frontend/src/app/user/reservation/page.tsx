@@ -35,7 +35,7 @@ export default function ReservationPage() {
             "note": note,
         })
 
-        const res = await fetch(`http://localhost:5001/createreservation`, {
+        const res = await fetch(`hhttps://sparkbytes.onrender.com/createreservation`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export default function ReservationPage() {
         // TODO: Implement backend functionality that will load the current events into the eventOpts state so that users can select
         // events they want to make a reservation for. This should be updated on load
         const fetchEvents = async () => {
-            const res = await fetch(`http://localhost:5001/active-events`, {
+            const res = await fetch(`https://sparkbytes.onrender.com/active-events`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -90,7 +90,7 @@ export default function ReservationPage() {
     useEffect(() => {
         // TODO: Implement backend functionality that will load the food options for the selected event. Updated whenever the selected event changes
         const fetchFood = async () => {
-            const res = await fetch(`http://localhost:5001/get-food/${event?.event_id}`, {
+            const res = await fetch(`https://sparkbytes.onrender.com/get-food/${event?.event_id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

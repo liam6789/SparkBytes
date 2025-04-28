@@ -86,7 +86,7 @@ export default function EventCreationPage() {
             "location_address": location?.address,
         })
 
-        const res = await fetch(`http://localhost:5001/createevent`, {
+        const res = await fetch(`https://sparkbytes.onrender.com/createevent`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
