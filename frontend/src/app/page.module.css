@@ -167,7 +167,7 @@ a.secondary {
   }
 }
 
-{/* ======================== Home page section ======================= */}
+/* ======================== Home page section ======================= */
 .homeSection {
   background: url('/images/backgroung.jpeg') no-repeat center center;
   background-size: cover;
