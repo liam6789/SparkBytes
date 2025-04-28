@@ -94,8 +94,8 @@ export default function AboutPage() {
       textAlign: "left",
     }}
   >
-    We’re the Three Stooges! A team of (you guessed it) three beginner web developers driven by a shared passion for sustainability, accessibility, and community impact. 
-    SparkBytes began as a simple idea to tackle food waste on campus, and it's grown into a project we’re proud of — bringing people together over good food while making a real difference.
+    We&apos;re the Three Stooges! A team of (you guessed it) three beginner web developers driven by a shared passion for sustainability, accessibility, and community impact. 
+    SparkBytes began as a simple idea to tackle food waste on campus, and it&apos;s grown into a project we&apos;re proud of — bringing people together over good food while making a real difference.
   </Paragraph>
 
 </div>
