@@ -31,7 +31,7 @@ export default function Home() {
             style={{ 
               width: "400px", 
               height: "auto",
-              marginBottom: "0px"
+              marginBottom: "10px"
             }}
           />
         <Typography.Title className={styles.homeTitle} style={{ fontSize: "100px", marginTop: "-50px"}}>
