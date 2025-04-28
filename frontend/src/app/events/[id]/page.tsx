@@ -1,11 +1,16 @@
 "use client";
 
 import { useParams, useRouter } from 'next/navigation';
+import dynamic from "next/dynamic";
 import React, { useEffect, useState } from 'react';
 import { Typography, Table, Divider} from "antd";
 import dayjs from "dayjs";
 import { FoodData, EventData} from "@/types/types";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { Marker, useJsApiLoader } from "@react-google-maps/api";
+
+const GoogleMap = dynamic(() => import("@react-google-maps/api").then((mod) => mod.GoogleMap), {
+    ssr: false,
+});
 
 // interface FoodTableData {
 //     key: number;
