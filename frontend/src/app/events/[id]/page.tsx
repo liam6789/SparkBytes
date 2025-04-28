@@ -6,12 +6,12 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Table, Divider} from "antd";
 import dayjs from "dayjs";
 import { FoodData, EventData} from "@/types/types";
-import { Marker, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap as GoogleMapType, Marker, useJsApiLoader } from "@react-google-maps/api";
 
-const GoogleMap = dynamic(() =>
-    import("@react-google-maps/api").then((mod) => mod.GoogleMap as unknown as React.FC<any>),
+const GoogleMap = dynamic<React.ComponentProps<typeof GoogleMapType>>(
+    () => import("@react-google-maps/api").then((mod) => mod.GoogleMap),
     { ssr: false }
-);
+  );
 
 // interface FoodTableData {
 //     key: number;
