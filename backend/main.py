@@ -662,6 +662,7 @@ async def login_user(login_data: LoginRequest):
             email=user_data["email"],
             role=user_data["role"],
             name=user_data["name"],
+            optin=user_data["optin"],
         )
     )
 
