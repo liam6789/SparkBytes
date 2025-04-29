@@ -1,7 +1,7 @@
 'use client';
 
 // Imports: components, effects, eventcard component, nav etc
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Typography, Divider, Spin, Card, Rate, Switch } from 'antd';
 import { EventData } from '@/types/types';
 import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
@@ -19,6 +19,7 @@ export default function HostProfile() {
   const [archivedEvents, setArchivedEvents] = useState<EventData[]>([]);
   // Load and error fetch
   const [loading, setLoading] = useState(true);
+  const [opted, setOpted] = useState(false);
 
   // Fetch events on load
   useEffect(() => {
@@ -71,6 +72,11 @@ export default function HostProfile() {
       })
     }
     
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     const user = localStorage.getItem("user")
     if (user) {
       const userObj = JSON.parse(user)
