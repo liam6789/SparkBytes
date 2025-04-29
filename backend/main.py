@@ -956,7 +956,7 @@ async def reset_password(request: ResetPasswordRequest):  # ✅ New route for re
         # Update the user's password in the database
         response = supabase.table("users").update({"password": new_hashed_password}).eq("user_id", user_id).execute()
         
-        if response.status_code != 200:
+        if not response.data:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update password.")
         
         return {"message": "Password has been successfully reset. You can now log in with your new password."}
