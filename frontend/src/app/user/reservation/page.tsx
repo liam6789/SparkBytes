@@ -149,7 +149,7 @@ export default function ReservationPage() {
             <Dropdown 
                 menu={{
                     items: eventOpts.map((events) => ({
-                        key: events.event_name,
+                        key: events.event_id,
                         label: events.event_name,
                         onClick: () => setEvent(events),
                     })),
