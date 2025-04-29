@@ -6,6 +6,7 @@ import styles from "../page.module.css";
 
 const { Title, Paragraph } = Typography;
 
+// List of creators, add bio
 const creators = [
   {
     name: "Patty Huang",
@@ -28,10 +29,13 @@ const creators = [
 ];
 
 export default function AboutPage() {
+  // Use states for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Display inside modal
   const [modalContent, setModalContent] = useState({ title: '', content: '' });
 
   // Handle clicking on a creator
+  // When image is clicked open up person's info
   const showModal = (creator: { name: string, bio: string }) => {
     setModalContent({
       title: creator.name,
@@ -40,6 +44,7 @@ export default function AboutPage() {
     setIsModalOpen(true);
   };
 
+  // Open and closing modal
   const handleOk = () => {
     setIsModalOpen(false);
   };
@@ -50,6 +55,7 @@ export default function AboutPage() {
 
   return (
     <>
+      {/* === Container === */}
       <div style={{
         display: "flex",
         flexDirection: "column",
@@ -84,7 +90,7 @@ export default function AboutPage() {
     }}
   />
 
-  {/* === Paragraph Text === */}
+  {/* === Paragraph text and style === */}
   <Paragraph 
     className={styles.homePara} 
     style={{ 
@@ -100,12 +106,14 @@ export default function AboutPage() {
 
 </div>
 
+        {/* === Creators section === */}
         <Title>About the Creators</Title>
 
         {/* Popup Creator */}
         <div style={{width: "100%", display: "flex", gap: "40px", flexWrap: "wrap", marginTop: "20px", justifyContent: "center", alignItems: "center"}}>
           {creators.map((creator, index) => (
             <div key={index} style={{ textAlign: "center" }}>
+              {/* Creator image to click on */}
               <img
                 src={creator.image}
                 alt={creator.name}
@@ -113,13 +121,14 @@ export default function AboutPage() {
                 className={styles.profileImage}
                 style={{ cursor: 'pointer' }}
               />
+              {/* Creator name */}
               <Paragraph><strong>{creator.name}</strong></Paragraph>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Modal Popup */}
+      {/* Modal popup with the bio details */}
       <Modal
         title={modalContent.title}
         open={isModalOpen}
