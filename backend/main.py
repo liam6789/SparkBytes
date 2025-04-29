@@ -63,6 +63,7 @@ class User(BaseModel):
     email: EmailStr
     role: str
     name: str
+    optin: bool 
 
 # Model for login requests
 class LoginRequest(BaseModel):
@@ -228,6 +229,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             email=user_data["email"],
             role=user_data["role"],
             name=user_data["name"],
+            optin=user_data["optin"],
         )
     except jwt.PyJWTError:
         raise HTTPException(
@@ -575,7 +577,8 @@ async def register_user(user_data: UserCreate):
             "email": user_data.email,
             "password": hashed_password,
             "role": user_data.role,
-            "name": user_data.name
+            "name": user_data.name,
+            "optin": False
         }
         
         response = supabase.table("users").insert(new_user).execute()
@@ -593,6 +596,7 @@ async def register_user(user_data: UserCreate):
             email=created_user["email"],
             role=created_user["role"],
             name=created_user["name"],
+            optin=created_user["optin"]
         )
     
     except Exception as e:
@@ -600,6 +604,23 @@ async def register_user(user_data: UserCreate):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error creating user: {str(e)}"
         )
+    
+@app.post("/optupdate")
+async def optupdate(current_user: User = Depends(get_current_user)):
+    response = (
+        supabase.table("users")
+        .update({"optin", current_user.optin})
+        .eq("user_id",current_user.user_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete event"
+        )
+    
+    return {"message" : "success"}
 
 @app.post("/login", response_model=LoginResponse)
 async def login_user(login_data: LoginRequest):
