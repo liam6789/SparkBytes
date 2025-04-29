@@ -2,7 +2,7 @@
 
 // Imports: components, effects, eventcard component, nav etc
 import React, { useEffect, useState } from 'react';
-import { Typography, Divider, Spin, Card, Rate } from 'antd';
+import { Typography, Divider, Spin, Card, Rate, Switch } from 'antd';
 import { EventData } from '@/types/types';
 import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
@@ -19,6 +19,7 @@ export default function HostProfile() {
   const [archivedEvents, setArchivedEvents] = useState<EventData[]>([]);
   // Load and error fetch
   const [loading, setLoading] = useState(true);
+  const [opted, setOpted] = useState(false);
 
   // Fetch events on load
   useEffect(() => {
@@ -48,6 +49,37 @@ export default function HostProfile() {
 
     fetchEvents();
   }, []);
+
+  useEffect(() => {
+      const user = localStorage.getItem("user")
+      if (user) {
+        const optVal = JSON.parse(user).optin
+        if (optVal != null) {
+          setOpted(optVal)
+        } 
+      }
+    },[]) 
+
+  useEffect(() => {
+    const OptUpdate = async() => {
+      const token = localStorage.getItem("accessToken");
+      await fetch(`https://sparkbytes.onrender.com/optupdate/${opted}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      })
+    }
+    
+    const user = localStorage.getItem("user")
+    if (user) {
+      const userObj = JSON.parse(user)
+      userObj.optin = opted
+      localStorage.setItem("user", JSON.stringify(userObj))
+    }
+    OptUpdate()
+  }, [opted])
 
   // Loading spinner
   if (loading) {
