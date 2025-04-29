@@ -1,8 +1,8 @@
 'use client';
 
 // Imports: components, effects, eventcard component, nav etc
-import React, { useEffect, useState, useRef } from 'react';
-import { Typography, Divider, Spin, Card, Rate, Switch } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Typography, Divider, Spin, Card, Rate } from 'antd';
 import { EventData } from '@/types/types';
 import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
@@ -19,8 +19,6 @@ export default function HostProfile() {
   const [archivedEvents, setArchivedEvents] = useState<EventData[]>([]);
   // Load and error fetch
   const [loading, setLoading] = useState(true);
-  const [opted, setOpted] = useState(false);
-  const isFirstRender = useRef(true);
 
   // Fetch events on load
   useEffect(() => {
@@ -51,6 +49,7 @@ export default function HostProfile() {
     fetchEvents();
   }, []);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
   useEffect(() => {
@@ -90,6 +89,8 @@ export default function HostProfile() {
   }, [opted])
 
 >>>>>>> 4e73b4a (Made updates to allow both event creators and regular users to opt into email notifications)
+=======
+>>>>>>> 62a80c4 (Updated host and user profile pages)
   // Loading spinner
   if (loading) {
     return (
