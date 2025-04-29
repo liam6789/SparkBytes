@@ -1,8 +1,8 @@
 'use client';
 
 // Imports: components, effects, eventcard component, nav etc
-import React, { useEffect, useState, useRef } from 'react';
-import { Typography, Divider, Spin, Card, Rate, Switch } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Typography, Divider, Spin, Card, Rate } from 'antd';
 import { EventData } from '@/types/types';
 import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
@@ -19,8 +19,6 @@ export default function HostProfile() {
   const [archivedEvents, setArchivedEvents] = useState<EventData[]>([]);
   // Load and error fetch
   const [loading, setLoading] = useState(true);
-  const [opted, setOpted] = useState(false);
-  const isFirstRender = useRef(true);
 
   // Fetch events on load
   useEffect(() => {
@@ -50,42 +48,6 @@ export default function HostProfile() {
 
     fetchEvents();
   }, []);
-
-  useEffect(() => {
-      const user = localStorage.getItem("user")
-      if (user) {
-        const optVal = JSON.parse(user).optin
-        if (optVal != null) {
-          setOpted(optVal)
-        } 
-      }
-    },[]) 
-
-  useEffect(() => {
-    const OptUpdate = async() => {
-      const token = localStorage.getItem("accessToken");
-      await fetch(`https://sparkbytes.onrender.com/optupdate/${opted}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        }
-      })
-    }
-    
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    const user = localStorage.getItem("user")
-    if (user) {
-      const userObj = JSON.parse(user)
-      userObj.optin = opted
-      localStorage.setItem("user", JSON.stringify(userObj))
-    }
-    OptUpdate()
-  }, [opted])
 
   // Loading spinner
   if (loading) {
@@ -139,6 +101,15 @@ export default function HostProfile() {
   // Full page render
   return (
     <div style={{ padding: '40px 24px' }}>
+      <Title level={2}>Opt In To Email Notifications?</Title>
+      <Switch
+        value={opted}
+        checkedChildren={"Yes"}
+        unCheckedChildren={"No"}
+        onClick={() => {
+          setOpted(!opted)
+        }}
+      ></Switch>
       <Title level={2}>Your Active Events</Title>
       {activeEvents.length > 0 ? renderEventCards(activeEvents) : <Paragraph>No active events found.</Paragraph>}
 
