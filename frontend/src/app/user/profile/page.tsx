@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Card, Typography, Spin, Alert, Tag, Divider, Switch } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -88,7 +88,7 @@ export default function MyReservationsPage() {
   useEffect(() => {
     const OptUpdate = async() => {
       const token = localStorage.getItem("accessToken");
-      await fetch('https://sparkbytes.onrender.com/optupdate', {
+      await fetch(`https://sparkbytes.onrender.com/optupdate/${opted}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,17 +97,16 @@ export default function MyReservationsPage() {
       })
     }
     
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     const user = localStorage.getItem("user")
     if (user) {
       const userObj = JSON.parse(user)
       userObj.optin = opted
       localStorage.setItem("user", JSON.stringify(userObj))
-=======
-    const user = localStorage.getItem("user")
-    if (user) {
-      JSON.parse(user).optin = opted
-      localStorage.setItem("user", user)
->>>>>>> 8e8f585 (Made some updates to the user profile to allow users to optin to email notifications)
     }
     OptUpdate()
     console.log("opted:", opted)
