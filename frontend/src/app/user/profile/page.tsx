@@ -1,6 +1,7 @@
 'use client';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
 =======
 <<<<<<< HEAD
@@ -9,6 +10,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import React, { useEffect, useState } from 'react';
 >>>>>>> 8e8f585 (Made some updates to the user profile to allow users to optin to email notifications)
 >>>>>>> 62a80c4 (Updated host and user profile pages)
+=======
+import React, { useEffect, useState } from 'react';
+>>>>>>> b81be2a (Made some updates to the user profile to allow users to optin to email notifications)
 import { Card, Typography, Spin, Alert, Tag, Divider, Switch } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -101,6 +105,7 @@ export default function MyReservationsPage() {
     const OptUpdate = async() => {
       const token = localStorage.getItem("accessToken");
 <<<<<<< HEAD
+<<<<<<< HEAD
       await fetch('https://sparkbytes.onrender.com/optupdate', {
 =======
 <<<<<<< HEAD
@@ -109,6 +114,9 @@ export default function MyReservationsPage() {
       await fetch('https://sparkbytes.onrender.com/optupdate', {
 >>>>>>> 8e8f585 (Made some updates to the user profile to allow users to optin to email notifications)
 >>>>>>> 4e73b4a (Made updates to allow both event creators and regular users to opt into email notifications)
+=======
+      await fetch('https://sparkbytes.onrender.com/optupdate', {
+>>>>>>> b81be2a (Made some updates to the user profile to allow users to optin to email notifications)
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,12 +125,6 @@ export default function MyReservationsPage() {
       })
     }
     
-<<<<<<< HEAD
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
     const user = localStorage.getItem("user")
     if (user) {
       const userObj = JSON.parse(user)
