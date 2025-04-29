@@ -97,11 +97,11 @@ export default function MyReservationsPage() {
     
     const user = localStorage.getItem("user")
     if (user) {
-      JSON.parse(user).optin = opted
-      localStorage.setItem("user", user)
+      const userObj = JSON.parse(user)
+      userObj.optin = opted
+      localStorage.setItem("user", JSON.stringify(userObj))
     }
     OptUpdate()
-    console.log("opted:", opted)
   }, [opted])
 
   // Loading phase
