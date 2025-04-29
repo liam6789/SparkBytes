@@ -304,12 +304,12 @@ async def create_event(data: CreateEvent, current_user: User = Depends(get_curre
     )
 
     subject = "New Event Posted"
-    message = "Click the link to see the event details: spark-bytes-wheat.vercel.app/user/events/" + str(event_id) 
+    message = "Click the link to see the event details: spark-bytes-wheat.vercel.app/events/" + str(event_id) 
     users = response.data
     for user in users:
-        if user.role == 'regular_user' and user.optin == True:
+        if user["role"] == 'regular_user' and user["optin"] == True:
             print(message)
-            send_email(user.email, subject, message)
+            send_email(user["email"], subject, message)
 
     return {"message": "Success"}
 
@@ -522,6 +522,29 @@ async def create_reservation(data: CreateRes, current_user: User = Depends(get_c
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update food item"
         )
+    
+    response = (
+        supabase.table("events")
+        .select("*")
+        .eq("event_id", data.event_id)
+        .execute()
+    )
+
+    creator_id = response.data[0]["creator_id"]
+
+    response = (
+        supabase.table("users")
+        .select("*")
+        .execute()
+    )
+
+    subject = "New Reservation Made on Your Event"
+    message = "Click the link to see the details: spark-bytes-wheat.vercel.app/host/events/" + str(data.event_id) 
+    users = response.data
+    for user in users:
+        if user["user_id"] == creator_id and user["optin"] == True:
+            print(message)
+            send_email(user["email"], subject, message)
     
     return {"message": "Success"}
 
@@ -883,7 +906,7 @@ async def forgot_password(request: ForgotRequest):
         We received a request to reset your password for your SparkBytes account. 
         Click the link below to reset your password (Valid for 30 minutes):
 
-        http://localhost:3000/reset-password?token={reset_token}
+        spark-bytes-wheat.vercel.app/reset-password?token={reset_token}
 
         If you did not request this, please ignore this email.
 
