@@ -22,9 +22,9 @@ const creators = [
   },
   {
     name: "Liam McDonald",
-    image: "/images/", //edit
-    bio: `Liam is a sophomore ...
-    at Boston University. He...!`
+    image: "/images/Liam.jpg", 
+    bio: `Liam is a sophomore double majoring in Computer Science and Economics
+    at Boston University. Outside of CS he enjoys travel, exploring Boston, listening to music, and reading!`
   }
 ];
 
