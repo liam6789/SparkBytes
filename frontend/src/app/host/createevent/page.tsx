@@ -73,6 +73,10 @@ export default function EventCreationPage() {
       };
 
     const createevent = async () => {
+        if (!(name && description && startTime && endTime && foods && location)) {
+            alert("All fields must be updated")
+            return
+        }
         const token = localStorage.getItem("accessToken");
         const body = JSON.stringify({
             "name": name,
@@ -146,9 +150,17 @@ export default function EventCreationPage() {
                 format="YYYY-MM-DD HH:mm"
                 minDate={dayjs()}
                 onOk={(values: RangePickerProps['value']) => {
-                    if (values) {
-                        setStartTime(values[0])
-                        setEndTime(values[1])
+                    if (values && values[0] && values[1]) {
+                    const start = values[0];
+                    const end = values[1];
+
+                    if (!start.isSame(end, 'day')) {
+                        alert("Start time and end time must be on the same day.");
+                        return;
+                    }
+
+                    setStartTime(start);
+                    setEndTime(end);
                     }
                 }}
             />
