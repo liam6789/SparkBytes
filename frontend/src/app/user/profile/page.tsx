@@ -1,10 +1,6 @@
 'use client';
 
-<<<<<<< HEAD
-import React, { useEffect, useState, useRef } from 'react';
-=======
 import React, { useEffect, useState } from 'react';
->>>>>>> f8e950d (Made some updates to the user profile to allow users to optin to email notifications)
 import { Card, Typography, Spin, Alert, Tag, Divider, Switch } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -35,7 +31,9 @@ export default function MyReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+<<<<<<< HEAD
   const [opted, setOpted] = useState(false);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     // Fetch reservation data
@@ -91,11 +89,7 @@ export default function MyReservationsPage() {
   useEffect(() => {
     const OptUpdate = async() => {
       const token = localStorage.getItem("accessToken");
-<<<<<<< HEAD
-      await fetch(`https://sparkbytes.onrender.com/optupdate/${opted}`, {
-=======
       await fetch('https://sparkbytes.onrender.com/optupdate', {
->>>>>>> f8e950d (Made some updates to the user profile to allow users to optin to email notifications)
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,6 +98,11 @@ export default function MyReservationsPage() {
       })
     }
     
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     const user = localStorage.getItem("user")
     if (user) {
       const userObj = JSON.parse(user)
@@ -134,6 +133,7 @@ export default function MyReservationsPage() {
 
   return (
     <div style={{ padding: '40px 24px' }}>
+<<<<<<< HEAD
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
@@ -143,6 +143,13 @@ export default function MyReservationsPage() {
           setOpted(!opted)
         }}
       ></Switch>
+=======
+      {/* Hello name section */}
+      {user && (
+        <Title level={2}>Hello, {user.name}!</Title>
+      )}
+
+>>>>>>> a9e3751 (include hello user message in profile, edit footer)
       <Title level={2}>My Reservations</Title>
 
       {/* Message when no reservations found */}

@@ -605,6 +605,23 @@ async def register_user(user_data: UserCreate):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error creating user: {str(e)}"
         )
+    
+@app.post("/optupdate")
+async def optupdate(current_user: User = Depends(get_current_user)):
+    response = (
+        supabase.table("users")
+        .update({"optin", current_user.optin})
+        .eq("user_id",current_user.user_id)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete event"
+        )
+    
+    return {"message" : "success"}
 
 @app.post("/login", response_model=LoginResponse)
 async def login_user(login_data: LoginRequest):
