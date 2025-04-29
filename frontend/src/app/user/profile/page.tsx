@@ -1,6 +1,10 @@
 'use client';
 
+<<<<<<< HEAD
 import React, { useEffect, useState, useRef } from 'react';
+=======
+import React, { useEffect, useState } from 'react';
+>>>>>>> f8e950d (Made some updates to the user profile to allow users to optin to email notifications)
 import { Card, Typography, Spin, Alert, Tag, Divider, Switch } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -31,8 +35,6 @@ export default function MyReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [opted, setOpted] = useState(false);
-  const isFirstRender = useRef(true);
 
   useEffect(() => {
     // Fetch reservation data
@@ -101,6 +103,7 @@ export default function MyReservationsPage() {
       })
     }
     
+<<<<<<< HEAD
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
