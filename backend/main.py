@@ -304,7 +304,7 @@ async def create_event(data: CreateEvent, current_user: User = Depends(get_curre
     )
 
     subject = "New Event Posted"
-    message = "Click the link to see the event details: spark-bytes-wheat.vercel.app/user/events/" + event_id 
+    message = "Click the link to see the event details: spark-bytes-wheat.vercel.app/user/events/" + str(event_id) 
     users = response.data
     for user in users:
         if user.role == 'regular_user' and user.optin == True:
