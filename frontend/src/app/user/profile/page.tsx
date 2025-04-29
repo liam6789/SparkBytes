@@ -106,6 +106,7 @@ export default function MyReservationsPage() {
       const token = localStorage.getItem("accessToken");
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       await fetch('https://sparkbytes.onrender.com/optupdate', {
 =======
 <<<<<<< HEAD
@@ -117,6 +118,9 @@ export default function MyReservationsPage() {
 =======
       await fetch('https://sparkbytes.onrender.com/optupdate', {
 >>>>>>> b81be2a (Made some updates to the user profile to allow users to optin to email notifications)
+=======
+      await fetch(`https://sparkbytes.onrender.com/optupdate/${opted}`, {
+>>>>>>> 4b3722e (Made updates to allow both event creators and regular users to opt into email notifications)
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,10 +159,6 @@ export default function MyReservationsPage() {
 
   return (
     <div style={{ padding: '40px 24px' }}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 8e8f585 (Made some updates to the user profile to allow users to optin to email notifications)
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
@@ -168,16 +168,6 @@ export default function MyReservationsPage() {
           setOpted(!opted)
         }}
       ></Switch>
-<<<<<<< HEAD
-=======
-      {/* Hello name section */}
-      {user && (
-        <Title level={2}>Hello, {user.name}!</Title>
-      )}
-
->>>>>>> a9e3751 (include hello user message in profile, edit footer)
-=======
->>>>>>> 8e8f585 (Made some updates to the user profile to allow users to optin to email notifications)
       <Title level={2}>My Reservations</Title>
 
       {/* Message when no reservations found */}

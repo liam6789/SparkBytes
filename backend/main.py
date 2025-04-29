@@ -607,6 +607,7 @@ async def register_user(user_data: UserCreate):
         )
     
 <<<<<<< HEAD
+<<<<<<< HEAD
 @app.post("/optupdate/{opted}")
 async def optupdate(opted: bool, current_user: User = Depends(get_current_user)):
     response = (
@@ -619,6 +620,13 @@ async def optupdate(current_user: User = Depends(get_current_user)):
         supabase.table("users")
         .update({"optin", current_user.optin})
 >>>>>>> b81be2a (Made some updates to the user profile to allow users to optin to email notifications)
+=======
+@app.post("/optupdate/{opted}")
+async def optupdate(opted: bool, current_user: User = Depends(get_current_user)):
+    response = (
+        supabase.table("users")
+        .update({"optin": opted})
+>>>>>>> 4b3722e (Made updates to allow both event creators and regular users to opt into email notifications)
         .eq("user_id",current_user.user_id)
         .execute()
     )
@@ -630,10 +638,14 @@ async def optupdate(current_user: User = Depends(get_current_user)):
         )
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     return True
 =======
     return {"message" : "success"}
 >>>>>>> b81be2a (Made some updates to the user profile to allow users to optin to email notifications)
+=======
+    return True
+>>>>>>> 4b3722e (Made updates to allow both event creators and regular users to opt into email notifications)
 
 @app.post("/login", response_model=LoginResponse)
 async def login_user(login_data: LoginRequest):

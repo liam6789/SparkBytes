@@ -2,7 +2,7 @@
 
 // Imports: components, effects, eventcard component, nav etc
 import React, { useEffect, useState } from 'react';
-import { Typography, Divider, Spin, Card, Rate } from 'antd';
+import { Typography, Divider, Spin, Card, Rate, Switch } from 'antd';
 import { EventData } from '@/types/types';
 import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
@@ -52,7 +52,10 @@ export default function HostProfile() {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 4b3722e (Made updates to allow both event creators and regular users to opt into email notifications)
   useEffect(() => {
       const user = localStorage.getItem("user")
       if (user) {
@@ -75,11 +78,14 @@ export default function HostProfile() {
       })
     }
     
+<<<<<<< HEAD
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
 
+=======
+>>>>>>> 4b3722e (Made updates to allow both event creators and regular users to opt into email notifications)
     const user = localStorage.getItem("user")
     if (user) {
       const userObj = JSON.parse(user)
@@ -89,9 +95,12 @@ export default function HostProfile() {
     OptUpdate()
   }, [opted])
 
+<<<<<<< HEAD
 >>>>>>> 4e73b4a (Made updates to allow both event creators and regular users to opt into email notifications)
 =======
 >>>>>>> 62a80c4 (Updated host and user profile pages)
+=======
+>>>>>>> 4b3722e (Made updates to allow both event creators and regular users to opt into email notifications)
   // Loading spinner
   if (loading) {
     return (
