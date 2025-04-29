@@ -4,8 +4,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 =======
 import React, { useEffect, useState } from 'react';
->>>>>>> f8e950d (Made some updates to the user profile to allow users to optin to email notifications)
-import { Card, Typography, Spin, Alert, Tag, Divider, Switch } from 'antd';
+import { Card, Typography, Spin, Alert, Tag, Divider } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -35,6 +34,7 @@ export default function MyReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [opted, setOpted] = useState(false);
 
   useEffect(() => {
     // Fetch reservation data
@@ -77,48 +77,6 @@ export default function MyReservationsPage() {
     fetchReservations();
   }, []);
 
-  useEffect(() => {
-    const user = localStorage.getItem("user")
-    if (user) {
-      const optVal = JSON.parse(user).optin
-      if (optVal != null) {
-        setOpted(optVal)
-      } 
-    }
-  },[]) 
-
-  useEffect(() => {
-    const OptUpdate = async() => {
-      const token = localStorage.getItem("accessToken");
-<<<<<<< HEAD
-      await fetch(`https://sparkbytes.onrender.com/optupdate/${opted}`, {
-=======
-      await fetch('https://sparkbytes.onrender.com/optupdate', {
->>>>>>> f8e950d (Made some updates to the user profile to allow users to optin to email notifications)
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        }
-      })
-    }
-    
-<<<<<<< HEAD
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    const user = localStorage.getItem("user")
-    if (user) {
-      const userObj = JSON.parse(user)
-      userObj.optin = opted
-      localStorage.setItem("user", JSON.stringify(userObj))
-    }
-    OptUpdate()
-    console.log("opted:", opted)
-  }, [opted])
-
   // Loading phase
   if (loading) {
     return (
@@ -139,6 +97,15 @@ export default function MyReservationsPage() {
 
   return (
     <div style={{ padding: '40px 24px' }}>
+      <Title level={2}>Opt In To Email Notifications?</Title>
+      <Switch
+        value={opted}
+        checkedChildren={"yes"}
+        unCheckedChildren={"no"}
+        onClick={() => {
+          setOpted(!opted)
+        }}
+      ></Switch>
       <Title level={2}>My Reservations</Title>
 
       {/* Message when no reservations found */}
