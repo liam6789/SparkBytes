@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Card, Typography, Spin, Alert, Tag, Divider, Switch } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -32,11 +32,14 @@ export default function MyReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [opted, setOpted] = useState(false);
   const isFirstRender = useRef(true);
 =======
   const [user, setUser] = useState<UserProfile | null>(null); // User state for fetch name
 >>>>>>> a9e3751 (include hello user message in profile, edit footer)
+=======
+>>>>>>> f8e950d (Made some updates to the user profile to allow users to optin to email notifications)
 
   useEffect(() => {
     // Fetch reservation data
@@ -92,7 +95,7 @@ export default function MyReservationsPage() {
   useEffect(() => {
     const OptUpdate = async() => {
       const token = localStorage.getItem("accessToken");
-      await fetch('https://sparkbytes.onrender.com/optupdate', {
+      await fetch(`https://sparkbytes.onrender.com/optupdate/${opted}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,6 +104,7 @@ export default function MyReservationsPage() {
       })
     }
     
+<<<<<<< HEAD
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
@@ -108,8 +112,9 @@ export default function MyReservationsPage() {
 
     const user = localStorage.getItem("user")
     if (user) {
-      JSON.parse(user).optin = opted
-      localStorage.setItem("user", user)
+      const userObj = JSON.parse(user)
+      userObj.optin = opted
+      localStorage.setItem("user", JSON.stringify(userObj))
     }
     OptUpdate()
   }, [opted])
@@ -135,6 +140,7 @@ export default function MyReservationsPage() {
   return (
     <div style={{ padding: '40px 24px' }}>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
@@ -151,6 +157,8 @@ export default function MyReservationsPage() {
       )}
 
 >>>>>>> a9e3751 (include hello user message in profile, edit footer)
+=======
+>>>>>>> f8e950d (Made some updates to the user profile to allow users to optin to email notifications)
       <Title level={2}>My Reservations</Title>
 
       {/* Message when no reservations found */}
