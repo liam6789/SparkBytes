@@ -182,7 +182,7 @@ export default function EventCreationPage() {
             )}
             <GoogleMap
                 mapContainerStyle={mapStyle}
-                center={defaultCenter}
+                center={{lat: location?.lat ?? defaultCenter.lat, lng: location?.lng ?? defaultCenter.lng}}
                 zoom={15}
             >
                 <Marker position={{lat: location?.lat ?? defaultCenter.lat, lng: location?.lng ?? defaultCenter.lng}} />
