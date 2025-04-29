@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Card, Typography, Spin, Alert, Tag, Divider, Switch } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -27,6 +27,7 @@ export default function MyReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [opted, setOpted] = useState(false);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     // Fetch reservation data
@@ -82,6 +83,11 @@ export default function MyReservationsPage() {
       })
     }
     
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     const user = localStorage.getItem("user")
     if (user) {
       const userObj = JSON.parse(user)
