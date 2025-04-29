@@ -20,6 +20,7 @@ import jwt
 import bcrypt
 import smtplib # Send emails
 from email.mime.text import MIMEText  # Format "forget" email
+from email.mime.multipart import MIMEMultipart
 
 
 # ==================== DATABASE SETUP ==================== #
@@ -234,6 +235,20 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             detail="Invalid token or token expired",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+def send_email(recipient: str, subject: str, body: str):
+    sender_email = os.getenv("SENDER_EMAIL")
+    sender_pass = os.getenv("SENDER_PASS")
+
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = recipient
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(sender_email, sender_pass)
+        server.send_message(message)
 
 # ==================== ROUTES ==================== #
 @app.get("/")
@@ -281,6 +296,20 @@ async def create_event(data: CreateEvent, current_user: User = Depends(get_curre
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to insert food item"
             )
+        
+    response = (
+        supabase.table("users")
+        .select("*")
+        .execute()
+    )
+
+    subject = "New Event Posted"
+    message = "Click the link to see the event details: spark-bytes-wheat.vercel.app/user/events/" + event_id 
+    users = response.data
+    for user in users:
+        if user.role == 'regular_user' and user.optin == True:
+            print(message)
+            send_email(user.email, subject, message)
 
     return {"message": "Success"}
 
@@ -842,7 +871,7 @@ async def forgot_password(request: ForgotRequest):
     # Send password recovery email
     try:
         sender_email = os.getenv("SENDER_EMAIL")  # Sender email addr
-        sender_password = os.getenv("SENDER_PASSWORD")  # Account password
+        sender_password = os.getenv("SENDER_PASS")  # Account password
         smtp_server = "smtp.gmail.com" # Sever for gmail
         smtp_port = 587
 
