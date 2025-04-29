@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 
-const API_URL = 'https://sparkbytes.onrender.com/';  // Your FastAPI backend URL
+const API_URL = 'https://sparkbytes.onrender.com';  // Your FastAPI backend URL
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');    // Store new password
