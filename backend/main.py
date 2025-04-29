@@ -55,6 +55,7 @@ security = HTTPBearer()
 class UserCreate(BaseModel):
     email: EmailStr # Uses EmailStr for email validation
     password: str 
+    name: str
     role: Literal['regular_user', 'event_creator'] = 'regular_user' # Only want valid roles
 
 # Model for returning user information (excludes password)
