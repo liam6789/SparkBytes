@@ -68,7 +68,7 @@ export default function HostProfile() {
           <div style={{ marginBottom: "12px" }}>
             <div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
               <CalendarOutlined style={{ marginRight: "8px" }} />
-              <Text>{new Date(event.date).toLocaleDateString()}</Text>
+              <Text>{new Date(event.start_time).toLocaleDateString('en-US')}</Text>
             </div>
             <div style={{ display: "flex", alignItems: "center" }}>
               <ClockCircleOutlined style={{ marginRight: "8px" }} />

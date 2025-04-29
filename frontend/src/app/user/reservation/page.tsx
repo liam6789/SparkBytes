@@ -124,7 +124,7 @@ export default function ReservationPage() {
         // selected event so that they don't enter a value greater than the max.
         const setOpts = (foodItem: FoodData) => {
             const opts = [];
-            for (let i = 1; i <= foodItem.quantity; i++) {
+            for (let i = 1; i <= foodItem.quantity && i <= 5; i++) {
                 opts.push(i);
             }
             setQuantityOpts(opts);
