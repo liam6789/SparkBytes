@@ -185,9 +185,7 @@ export default function EventCreationPage() {
                 center={defaultCenter}
                 zoom={15}
             >
-                {location && (
-                    <Marker position={{ lat: location.lat, lng: location.lng }} />
-                )}
+                <Marker position={{lat: location?.lat ?? defaultCenter.lat, lng: location?.lng ?? defaultCenter.lng}} />
             </GoogleMap>
 
             <Typography.Title level={2}>
