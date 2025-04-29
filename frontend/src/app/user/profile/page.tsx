@@ -77,6 +77,36 @@ export default function MyReservationsPage() {
     fetchReservations();
   }, []);
 
+  useEffect(() => {
+    const user = localStorage.getItem("user")
+    if (user) {
+      const optVal = JSON.parse(user).optin
+      if (optVal != null) {
+        setOpted(optVal)
+      } 
+    }
+  },[]) 
+
+  useEffect(() => {
+    const OptUpdate = async() => {
+      const token = localStorage.getItem("accessToken");
+      await fetch('https://sparkbytes.onrender.com/optupdate', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      })
+    }
+    
+    const user = localStorage.getItem("user")
+    if (user) {
+      JSON.parse(user).optin = opted
+      localStorage.setItem("user", user)
+    }
+    OptUpdate()
+  }, [opted])
+
   // Loading phase
   if (loading) {
     return (
@@ -100,8 +130,8 @@ export default function MyReservationsPage() {
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
-        checkedChildren={"yes"}
-        unCheckedChildren={"no"}
+        checkedChildren={"Yes"}
+        unCheckedChildren={"No"}
         onClick={() => {
           setOpted(!opted)
         }}
