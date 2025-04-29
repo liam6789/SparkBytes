@@ -89,7 +89,15 @@ export default function MyReservationsPage() {
   useEffect(() => {
     const OptUpdate = async() => {
       const token = localStorage.getItem("accessToken");
+<<<<<<< HEAD
       await fetch('https://sparkbytes.onrender.com/optupdate', {
+=======
+<<<<<<< HEAD
+      await fetch(`https://sparkbytes.onrender.com/optupdate/${opted}`, {
+=======
+      await fetch('https://sparkbytes.onrender.com/optupdate', {
+>>>>>>> 8e8f585 (Made some updates to the user profile to allow users to optin to email notifications)
+>>>>>>> 4e73b4a (Made updates to allow both event creators and regular users to opt into email notifications)
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,8 +145,8 @@ export default function MyReservationsPage() {
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
-        checkedChildren={"yes"}
-        unCheckedChildren={"no"}
+        checkedChildren={"Yes"}
+        unCheckedChildren={"No"}
         onClick={() => {
           setOpted(!opted)
         }}
