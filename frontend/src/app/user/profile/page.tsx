@@ -31,7 +31,9 @@ export default function MyReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+<<<<<<< HEAD
   const [opted, setOpted] = useState(false);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     // Fetch reservation data
@@ -130,6 +132,7 @@ export default function MyReservationsPage() {
 
   return (
     <div style={{ padding: '40px 24px' }}>
+<<<<<<< HEAD
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
@@ -139,6 +142,13 @@ export default function MyReservationsPage() {
           setOpted(!opted)
         }}
       ></Switch>
+=======
+      {/* Hello name section */}
+      {user && (
+        <Title level={2}>Hello, {user.name}!</Title>
+      )}
+
+>>>>>>> a9e3751 (include hello user message in profile, edit footer)
       <Title level={2}>My Reservations</Title>
 
       {/* Message when no reservations found */}

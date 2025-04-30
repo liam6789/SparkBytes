@@ -20,6 +20,7 @@ export default function HostProfile() {
   // Load and error fetch
   const [loading, setLoading] = useState(true);
   const [opted, setOpted] = useState(false);
+  const isFirstRender = useRef(true);
 
   // Fetch events on load
   useEffect(() => {
