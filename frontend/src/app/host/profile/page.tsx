@@ -15,6 +15,7 @@ export default function HostProfile() {
   // Load and error fetch
   const [loading, setLoading] = useState(true);
   const [opted, setOpted] = useState(false);
+  const [welcome, setWelcome] = useState("");
   const isFirstRender = useRef(true);
 
   // Fetch events on load
@@ -50,6 +51,9 @@ export default function HostProfile() {
       const user = localStorage.getItem("user")
       if (user) {
         const optVal = JSON.parse(user).optin
+        const name = JSON.parse(user).name
+        const message = "Welcome " + name + "!!!"
+        setWelcome(message)
         if (optVal != null) {
           setOpted(optVal)
         } 
@@ -134,6 +138,7 @@ export default function HostProfile() {
   // Full page render
   return (
     <div style={{ padding: '40px 24px' }}>
+      <Title level={1}>{welcome}</Title>
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
