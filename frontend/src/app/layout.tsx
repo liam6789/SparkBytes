@@ -61,7 +61,7 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
                   {children}
                 </div>
               </Content>
-              <Footer style={{ textAlign: 'center' }}>Spark! ©2025 Created by Spark!</Footer>
+              <Footer style={{ textAlign: 'center' }}>Spark! ©2025 Created by The Three Stooges</Footer>
             </Layout>
           </LoadScript>
         </body>

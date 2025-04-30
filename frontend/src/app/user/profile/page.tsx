@@ -27,6 +27,7 @@ export default function MyReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [opted, setOpted] = useState(false);
+  const [welcome, setWelcome] = useState("");
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -65,6 +66,9 @@ export default function MyReservationsPage() {
     const user = localStorage.getItem("user")
     if (user) {
       const optVal = JSON.parse(user).optin
+      const name = JSON.parse(user).name
+      const message = "Welcome " + name + "!!!"
+      setWelcome(message)
       if (optVal != null) {
         setOpted(optVal)
       } 
@@ -117,6 +121,7 @@ export default function MyReservationsPage() {
 
   return (
     <div style={{ padding: '40px 24px' }}>
+      <Title level={1}>{welcome}</Title>
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
