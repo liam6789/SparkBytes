@@ -20,6 +20,7 @@ export default function HostProfile() {
   // Load and error fetch
   const [loading, setLoading] = useState(true);
   const [opted, setOpted] = useState(false);
+  const isFirstRender = useRef(true);
 
   // Fetch events on load
   useEffect(() => {
@@ -133,15 +134,6 @@ export default function HostProfile() {
   // Full page render
   return (
     <div style={{ padding: '40px 24px' }}>
-      <Title level={2}>Opt In To Email Notifications?</Title>
-      <Switch
-        value={opted}
-        checkedChildren={"Yes"}
-        unCheckedChildren={"No"}
-        onClick={() => {
-          setOpted(!opted)
-        }}
-      ></Switch>
       <Title level={2}>Your Active Events</Title>
       {activeEvents.length > 0 ? renderEventCards(activeEvents) : <Paragraph>No active events found.</Paragraph>}
 
