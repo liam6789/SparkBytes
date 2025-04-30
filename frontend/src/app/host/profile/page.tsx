@@ -19,6 +19,7 @@ export default function HostProfile() {
   const [archivedEvents, setArchivedEvents] = useState<EventData[]>([]);
   // Load and error fetch
   const [loading, setLoading] = useState(true);
+  const [opted, setOpted] = useState(false);
 
   // Fetch events on load
   useEffect(() => {

@@ -35,6 +35,7 @@ export default function MyReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [opted, setOpted] = useState(false);
 
   useEffect(() => {
     // Fetch reservation data
@@ -133,6 +134,15 @@ export default function MyReservationsPage() {
 
   return (
     <div style={{ padding: '40px 24px' }}>
+      <Title level={2}>Opt In To Email Notifications?</Title>
+      <Switch
+        value={opted}
+        checkedChildren={"yes"}
+        unCheckedChildren={"no"}
+        onClick={() => {
+          setOpted(!opted)
+        }}
+      ></Switch>
       <Title level={2}>My Reservations</Title>
 
       {/* Message when no reservations found */}
