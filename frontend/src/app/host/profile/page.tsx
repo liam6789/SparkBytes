@@ -8,12 +8,19 @@ import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 
 const { Title, Paragraph, Text } = Typography;
 
+// Define data type for the name
+interface UserProfile {
+  name: string;
+}
+
 export default function HostProfile() {
   // Local states to store the events
   const [activeEvents, setActiveEvents] = useState<EventData[]>([]);
   const [archivedEvents, setArchivedEvents] = useState<EventData[]>([]);
   // Load and error fetch
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [user, setUser] = useState<UserProfile | null>(null); // Adding user state for name
 
   // Fetch events on load
   useEffect(() => {
@@ -96,6 +103,11 @@ export default function HostProfile() {
   // Full page render
   return (
     <div style={{ padding: '40px 24px' }}>
+    {/* Hello, name section */}
+    {user && (
+      <Title level={2}>Hello, {user.name}!</Title>
+    )}
+
       <Title level={2}>Your Active Events</Title>
       {activeEvents.length > 0 ? renderEventCards(activeEvents) : <Paragraph>No active events found.</Paragraph>}
 

@@ -22,10 +22,16 @@ interface Reservation {
   };
 }
 
+// Define data type for the name
+interface UserProfile {
+  name: string;
+}
+
 export default function MyReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [user, setUser] = useState<UserProfile | null>(null); // User state for fetch name
 
   useEffect(() => {
     // Fetch reservation data
@@ -33,20 +39,29 @@ export default function MyReservationsPage() {
       try {
         // Auth token and API requestion
         const token = localStorage.getItem('accessToken');
+
+        // Fetch reservations
         const res = await fetch('https://sparkbytes.onrender.com/user/reservations', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        // Response error message
         if (!res.ok) throw new Error('Failed to fetch reservations');
-
-        // Interpret, update state
         const data = await res.json();
         setReservations(data.reservations || []);
 
-        // Error messages
+        // Fetch user profile separately to get name
+        const profileRes = await fetch('https://sparkbytes.onrender.com/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!profileRes.ok) throw new Error('Failed to fetch user profile');
+        const profileData = await profileRes.json();
+        setUser({ name: profileData.name }); // Save user name
+
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message || 'Something went wrong');
@@ -79,9 +94,14 @@ export default function MyReservationsPage() {
 
   return (
     <div style={{ padding: '40px 24px' }}>
+      {/* Hello name section */}
+      {user && (
+        <Title level={2}>Hello, {user.name}!</Title>
+      )}
+
       <Title level={2}>My Reservations</Title>
 
-    {/* Message when no reservations found */}
+      {/* Message when no reservations found */}
       {reservations.length === 0 ? (
         <Paragraph>No reservations yet. Go grab some food! :-P</Paragraph>
       ) : (
