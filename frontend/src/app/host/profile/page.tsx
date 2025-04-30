@@ -19,8 +19,13 @@ export default function HostProfile() {
   const [archivedEvents, setArchivedEvents] = useState<EventData[]>([]);
   // Load and error fetch
   const [loading, setLoading] = useState(true);
+<<<<<<< HEAD
   const [opted, setOpted] = useState(false);
   const isFirstRender = useRef(true);
+=======
+  const [error, setError] = useState('');
+  const [user, setUser] = useState<UserProfile | null>(null); // Adding user state for name
+>>>>>>> a9e3751 (include hello user message in profile, edit footer)
 
   // Fetch events on load
   useEffect(() => {
@@ -139,6 +144,7 @@ export default function HostProfile() {
   // Full page render
   return (
     <div style={{ padding: '40px 24px' }}>
+<<<<<<< HEAD
       <Title level={2}>Opt In To Email Notifications?</Title>
       <Switch
         value={opted}
@@ -148,6 +154,13 @@ export default function HostProfile() {
           setOpted(!opted)
         }}
       ></Switch>
+=======
+    {/* Hello, name section */}
+    {user && (
+      <Title level={2}>Hello, {user.name}!</Title>
+    )}
+
+>>>>>>> a9e3751 (include hello user message in profile, edit footer)
       <Title level={2}>Your Active Events</Title>
       {activeEvents.length > 0 ? renderEventCards(activeEvents) : <Paragraph>No active events found.</Paragraph>}
 
