@@ -208,8 +208,9 @@ export default function EventDetails() {
               }}
             />
         },
-        { title: "Action", dataIndex: "action", key:"action", render: (record: FoodTableData) => 
+        { title: "Action", dataIndex: "action", key:"action", render: (value, record: FoodTableData) => 
             <Button type="primary" onClick={() => {
+                console.log(value)
                 const updatedFoodOpts = editFoodOpts.map(item => 
                     item.food_id === record.key ? {...item, quantity: 0} : item
                 )
@@ -231,8 +232,9 @@ export default function EventDetails() {
         {title: "Food Name", dataIndex: "food_id", key: "food_id"},
         {title: "Quantity", dataIndex: "quantity", key: "quantity"},
         {title: "Reservation Time", dataIndex: "res_time", key: "res_time"},
-        {title: "Action", dataIndex: "action", key: "action", render: (record: ResTableData) => 
+        {title: "Action", dataIndex: "action", key: "action", render: (value, record: ResTableData) => 
             <Button type="primary" onClick={() => {
+                console.log(value)
                 const updatedResOpts = editResOpts.map(res => 
                     res.res_id === record.key ? {...res, quantity: 0} : res
                 );
